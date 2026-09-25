@@ -20,11 +20,7 @@ function Movies() {
 
         setMovies(movieData);
       } catch (error) {
-        console.error(
-          "Failed to load movies:",
-          error
-        );
-
+        console.error("Failed to load movies:", error);
         setMovies([]);
       } finally {
         setLoading(false);
@@ -46,16 +42,20 @@ function Movies() {
       return poster;
     }
 
-    return `http://localhost:5000${poster}`;
+    const apiBaseUrl =
+      import.meta.env.VITE_API_URL ||
+      "http://localhost:5000/api";
+
+    const backendUrl = apiBaseUrl.replace(/\/api\/?$/, "");
+
+    return `${backendUrl}${poster.startsWith("/") ? poster : `/${poster}`}`;
   };
 
   if (loading) {
     return (
       <div className="movies-page">
         <div className="movies-header">
-          <p className="section-label">
-            CINEBOOK
-          </p>
+          <p className="section-label">CINEBOOK</p>
 
           <h1>Movies</h1>
         </div>
@@ -122,9 +122,7 @@ function Movies() {
                 className="movie-card"
                 key={movie._id}
                 onClick={() =>
-                  navigate(
-                    `/movies/${movie._id}`
-                  )
+                  navigate(`/movies/${movie._id}`)
                 }
               >
 
@@ -134,11 +132,12 @@ function Movies() {
 
                   {movie.poster ? (
                     <img
-                      src={getPosterUrl(
-                        movie.poster
-                      )}
+                      src={getPosterUrl(movie.poster)}
                       alt={movie.title}
                       loading="lazy"
+                      onError={(event) => {
+                        event.currentTarget.style.display = "none";
+                      }}
                     />
                   ) : (
                     <div className="movie-poster-fallback">
@@ -159,12 +158,8 @@ function Movies() {
                   </h3>
 
                   <p>
-                    {Array.isArray(
-                      movie.genre
-                    )
-                      ? movie.genre.join(
-                          " • "
-                        )
+                    {Array.isArray(movie.genre)
+                      ? movie.genre.join(" • ")
                       : movie.genre || ""}
                   </p>
 
@@ -184,14 +179,12 @@ function Movies() {
 
                   <span
                     className={
-                      movie.status ===
-                      "now_showing"
+                      movie.status === "now_showing"
                         ? "movie-status now-showing"
                         : "movie-status upcoming"
                     }
                   >
-                    {movie.status ===
-                    "now_showing"
+                    {movie.status === "now_showing"
                       ? "Now Showing"
                       : "Coming Soon"}
                   </span>
