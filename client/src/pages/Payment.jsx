@@ -23,6 +23,32 @@ function Payment() {
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState("");
 
+  // ========================================
+  // DEMO PAYMENT DETAILS
+  // These are kept only in React state.
+  // They are NOT sent to the backend.
+  // ========================================
+
+  const [upiId, setUpiId] = useState("");
+
+  const [cardNumber, setCardNumber] =
+    useState("");
+
+  const [cardHolderName, setCardHolderName] =
+    useState("");
+
+  const [cardExpiry, setCardExpiry] =
+    useState("");
+
+  const [cardCvv, setCardCvv] =
+    useState("");
+
+  const [bankName, setBankName] =
+    useState("");
+
+  const [customerId, setCustomerId] =
+    useState("");
+
   /*
     LOAD PAYMENT DATA
   */
@@ -59,10 +85,6 @@ function Payment() {
 
         /*
           SELECTED SEATS
-
-          Priority:
-          1. Navigation state
-          2. LocalStorage
         */
         let seats =
           state.selectedSeats ||
@@ -85,11 +107,6 @@ function Payment() {
 
         /*
           TOTAL AMOUNT
-
-          IMPORTANT:
-          Use the total calculated by
-          SeatSelection instead of
-          recalculating it here.
         */
         let savedTotal = 0;
 
@@ -114,7 +131,7 @@ function Payment() {
         }
 
         /*
-          Validate show
+          VALIDATE SHOW
         */
         if (!finalShowId) {
           setError(
@@ -125,7 +142,7 @@ function Payment() {
         }
 
         /*
-          Validate seats
+          VALIDATE SEATS
         */
         if (
           !Array.isArray(seats) ||
@@ -139,7 +156,7 @@ function Payment() {
         }
 
         /*
-          Save IDs
+          SAVE IDs
         */
         setShowId(
           String(finalShowId)
@@ -162,20 +179,17 @@ function Payment() {
         }
 
         /*
-          Save seats exactly as selected
+          SAVE SEATS
         */
         setSelectedSeats(seats);
 
         /*
-          Save exact total
+          SAVE TOTAL
         */
         setTotalAmount(savedTotal);
 
         /*
           LOAD SHOW
-
-          The show is loaded only for
-          displaying movie/theatre/date/time.
         */
         const response = await api.get(
           `/shows/${finalShowId}`
@@ -196,8 +210,7 @@ function Payment() {
         setShow(showData);
 
         /*
-          If movie ID was missing,
-          recover it from backend show.
+          RECOVER MOVIE ID
         */
         if (!finalMovieId) {
           const backendMovieId =
@@ -235,7 +248,7 @@ function Payment() {
   }, [location.state]);
 
   /*
-    Convert seat to string
+    CONVERT SEAT TO STRING
   */
   const getSeatNumber = (seat) => {
     if (typeof seat === "string") {
@@ -248,6 +261,148 @@ function Payment() {
       seat?.name ||
       ""
     );
+  };
+
+  /*
+    FORMAT CARD NUMBER
+  */
+  const handleCardNumberChange = (event) => {
+    let value = event.target.value;
+
+    value = value
+      .replace(/\D/g, "")
+      .slice(0, 16);
+
+    value = value
+      .replace(/(.{4})/g, "$1 ")
+      .trim();
+
+    setCardNumber(value);
+  };
+
+  /*
+    FORMAT CARD EXPIRY
+  */
+  const handleCardExpiryChange = (event) => {
+    let value = event.target.value;
+
+    value = value
+      .replace(/\D/g, "")
+      .slice(0, 4);
+
+    if (value.length > 2) {
+      value =
+        value.slice(0, 2) +
+        "/" +
+        value.slice(2);
+    }
+
+    setCardExpiry(value);
+  };
+
+  /*
+    VALIDATE PAYMENT DETAILS
+
+    IMPORTANT:
+    These details are for the simulated
+    payment interface only.
+  */
+  const validatePaymentDetails = () => {
+    setError("");
+
+    /*
+      UPI
+    */
+    if (paymentMethod === "UPI") {
+      if (!upiId.trim()) {
+        setError(
+          "Please enter a demo UPI ID."
+        );
+        return false;
+      }
+
+      if (
+        !upiId.includes("@") ||
+        upiId.trim().length < 5
+      ) {
+        setError(
+          "Please enter a valid demo UPI ID, for example demo@upi."
+        );
+        return false;
+      }
+
+      return true;
+    }
+
+    /*
+      CARD
+    */
+    if (paymentMethod === "Card") {
+      const cleanCardNumber =
+        cardNumber.replace(/\s/g, "");
+
+      if (
+        cleanCardNumber.length !== 16
+      ) {
+        setError(
+          "Please enter a 16-digit demo card number."
+        );
+        return false;
+      }
+
+      if (!cardHolderName.trim()) {
+        setError(
+          "Please enter the card holder name."
+        );
+        return false;
+      }
+
+      if (
+        !/^\d{2}\/\d{2}$/.test(
+          cardExpiry
+        )
+      ) {
+        setError(
+          "Please enter expiry in MM/YY format."
+        );
+        return false;
+      }
+
+      if (!/^\d{3}$/.test(cardCvv)) {
+        setError(
+          "Please enter a 3-digit demo CVV."
+        );
+        return false;
+      }
+
+      return true;
+    }
+
+    /*
+      NET BANKING
+    */
+    if (
+      paymentMethod ===
+      "Net Banking"
+    ) {
+      if (!bankName) {
+        setError(
+          "Please select a bank."
+        );
+        return false;
+      }
+
+      if (!customerId.trim()) {
+        setError(
+          "Please enter a demo customer ID."
+        );
+        return false;
+      }
+
+      return true;
+    }
+
+    return true;
   };
 
   /*
@@ -342,7 +497,14 @@ function Payment() {
       }
 
       /*
-        CONVERT SEATS TO STRINGS
+        VALIDATE SELECTED PAYMENT FORM
+      */
+      if (!validatePaymentDetails()) {
+        return;
+      }
+
+      /*
+        CONVERT SEATS
       */
       const seatNumbers =
         selectedSeats
@@ -364,7 +526,7 @@ function Payment() {
       setPaying(true);
 
       /*
-        SAVE EXACT BOOKING DATA
+        SAVE BOOKING DATA
       */
       localStorage.setItem(
         "cinebookMovieId",
@@ -378,9 +540,7 @@ function Payment() {
 
       localStorage.setItem(
         "cinebookSelectedSeats",
-        JSON.stringify(
-          seatNumbers
-        )
+        JSON.stringify(seatNumbers)
       );
 
       localStorage.setItem(
@@ -391,6 +551,11 @@ function Payment() {
       /*
         STEP 1
         CREATE BOOKING
+
+        IMPORTANT:
+        We intentionally send only
+        paymentMethod to your existing
+        backend.
       */
       const bookingResponse =
         await api.post(
@@ -572,6 +737,8 @@ function Payment() {
     <div className="payment-page">
       <div className="payment-container">
 
+        {/* HEADER */}
+
         <div className="payment-header">
           <p className="section-label">
             CINEBOOK
@@ -587,11 +754,15 @@ function Payment() {
           </p>
         </div>
 
+        {/* ERROR */}
+
         {error && (
           <div className="payment-error">
             {error}
           </div>
         )}
+
+        {/* BOOKING SUMMARY */}
 
         {show && (
           <div className="payment-summary">
@@ -675,6 +846,7 @@ function Payment() {
             </div>
 
             <div className="payment-total">
+
               <span>
                 Total Amount
               </span>
@@ -682,10 +854,13 @@ function Payment() {
               <strong>
                 ₹{Number(totalAmount)}
               </strong>
+
             </div>
 
           </div>
         )}
+
+        {/* PAYMENT METHODS */}
 
         {show &&
           selectedSeats.length > 0 && (
@@ -696,6 +871,8 @@ function Payment() {
               </h2>
 
               <div className="payment-methods">
+
+                {/* UPI */}
 
                 <button
                   type="button"
@@ -721,6 +898,8 @@ function Payment() {
                   </span>
                 </button>
 
+                {/* CARD */}
+
                 <button
                   type="button"
                   className={
@@ -743,6 +922,8 @@ function Payment() {
                     Credit / Debit Card
                   </span>
                 </button>
+
+                {/* NET BANKING */}
 
                 <button
                   type="button"
@@ -768,6 +949,279 @@ function Payment() {
                 </button>
 
               </div>
+
+              {/* ========================================
+                  UPI DETAILS
+              ======================================== */}
+
+              {paymentMethod ===
+                "UPI" && (
+                <div className="payment-form">
+
+                  <div className="payment-form-header">
+
+                    <h3>
+                      UPI Payment
+                    </h3>
+
+                    <p>
+                      Enter your UPI ID
+                      for this demo payment.
+                    </p>
+
+                  </div>
+
+                  <div className="payment-field">
+
+                    <label>
+                      UPI ID
+                    </label>
+
+                    <input
+                      type="text"
+                      value={upiId}
+                      onChange={(event) =>
+                        setUpiId(
+                          event.target.value
+                        )
+                      }
+                      placeholder="demo@upi"
+                      autoComplete="off"
+                    />
+
+                    <small>
+                      Example: demo@upi
+                    </small>
+
+                  </div>
+
+                  <div className="demo-payment-note">
+                    Demo payment only. Do not
+                    enter a real UPI credential.
+                  </div>
+
+                </div>
+              )}
+
+              {/* ========================================
+                  CARD DETAILS
+              ======================================== */}
+
+              {paymentMethod ===
+                "Card" && (
+                <div className="payment-form">
+
+                  <div className="payment-form-header">
+
+                    <h3>
+                      Credit / Debit Card
+                    </h3>
+
+                    <p>
+                      Enter demo card details
+                      to simulate payment.
+                    </p>
+
+                  </div>
+
+                  <div className="payment-field">
+
+                    <label>
+                      Card Number
+                    </label>
+
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={cardNumber}
+                      onChange={
+                        handleCardNumberChange
+                      }
+                      placeholder="4111 1111 1111 1111"
+                      autoComplete="off"
+                    />
+
+                  </div>
+
+                  <div className="payment-field">
+
+                    <label>
+                      Card Holder Name
+                    </label>
+
+                    <input
+                      type="text"
+                      value={
+                        cardHolderName
+                      }
+                      onChange={(event) =>
+                        setCardHolderName(
+                          event.target.value
+                        )
+                      }
+                      placeholder="DEMO USER"
+                      autoComplete="off"
+                    />
+
+                  </div>
+
+                  <div className="payment-form-row">
+
+                    <div className="payment-field">
+
+                      <label>
+                        Expiry Date
+                      </label>
+
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        value={cardExpiry}
+                        onChange={
+                          handleCardExpiryChange
+                        }
+                        placeholder="MM/YY"
+                        autoComplete="off"
+                      />
+
+                    </div>
+
+                    <div className="payment-field">
+
+                      <label>
+                        CVV
+                      </label>
+
+                      <input
+                        type="password"
+                        inputMode="numeric"
+                        maxLength="3"
+                        value={cardCvv}
+                        onChange={(event) =>
+                          setCardCvv(
+                            event.target.value.replace(
+                              /\D/g,
+                              ""
+                            )
+                          )
+                        }
+                        placeholder="123"
+                        autoComplete="off"
+                      />
+
+                    </div>
+
+                  </div>
+
+                  <div className="demo-payment-note">
+                    Demo card only. Never enter
+                    your real card details.
+                  </div>
+
+                </div>
+              )}
+
+              {/* ========================================
+                  NET BANKING DETAILS
+              ======================================== */}
+
+              {paymentMethod ===
+                "Net Banking" && (
+                <div className="payment-form">
+
+                  <div className="payment-form-header">
+
+                    <h3>
+                      Net Banking
+                    </h3>
+
+                    <p>
+                      Select a bank and enter
+                      demo customer details.
+                    </p>
+
+                  </div>
+
+                  <div className="payment-field">
+
+                    <label>
+                      Select Bank
+                    </label>
+
+                    <select
+                      value={bankName}
+                      onChange={(event) =>
+                        setBankName(
+                          event.target.value
+                        )
+                      }
+                    >
+
+                      <option value="">
+                        Select your bank
+                      </option>
+
+                      <option value="State Bank of India">
+                        State Bank of India
+                      </option>
+
+                      <option value="HDFC Bank">
+                        HDFC Bank
+                      </option>
+
+                      <option value="ICICI Bank">
+                        ICICI Bank
+                      </option>
+
+                      <option value="Axis Bank">
+                        Axis Bank
+                      </option>
+
+                      <option value="Kotak Mahindra Bank">
+                        Kotak Mahindra Bank
+                      </option>
+
+                      <option value="Punjab National Bank">
+                        Punjab National Bank
+                      </option>
+
+                      <option value="Bank of Baroda">
+                        Bank of Baroda
+                      </option>
+
+                    </select>
+
+                  </div>
+
+                  <div className="payment-field">
+
+                    <label>
+                      Customer ID
+                    </label>
+
+                    <input
+                      type="text"
+                      value={customerId}
+                      onChange={(event) =>
+                        setCustomerId(
+                          event.target.value
+                        )
+                      }
+                      placeholder="DEMO12345"
+                      autoComplete="off"
+                    />
+
+                  </div>
+
+                  <div className="demo-payment-note">
+                    Demo banking only. No real
+                    banking password is requested.
+                  </div>
+
+                </div>
+              )}
+
+              {/* PAY BUTTON */}
 
               <button
                 type="button"
