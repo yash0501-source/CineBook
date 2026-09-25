@@ -1,0 +1,261 @@
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="600"
+  height="900"
+  viewBox="0 0 600 900"
+>
+
+<defs>
+
+  <linearGradient
+    id="background"
+    x1="0%"
+    y1="0%"
+    x2="100%"
+    y2="100%"
+  >
+    <stop
+      offset="0%"
+      stop-color="#1c0500"
+    />
+
+    <stop
+      offset="100%"
+      stop-color="#000000"
+    />
+  </linearGradient>
+
+  <radialGradient
+    id="glow"
+    cx="50%"
+    cy="35%"
+    r="60%"
+  >
+    <stop
+      offset="0%"
+      stop-color="#f97316"
+      stop-opacity="0.22"
+    />
+
+    <stop
+      offset="100%"
+      stop-color="#f97316"
+      stop-opacity="0"
+    />
+  </radialGradient>
+
+  <linearGradient
+    id="bottomFade"
+    x1="0%"
+    y1="0%"
+    x2="0%"
+    y2="100%"
+  >
+    <stop
+      offset="0%"
+      stop-color="#000000"
+      stop-opacity="0"
+    />
+
+    <stop
+      offset="65%"
+      stop-color="#000000"
+      stop-opacity="0.15"
+    />
+
+    <stop
+      offset="100%"
+      stop-color="#000000"
+      stop-opacity="0.98"
+    />
+  </linearGradient>
+
+</defs>
+
+<!-- BACKGROUND -->
+
+<rect
+  width="600"
+  height="900"
+  fill="url(#background)"
+/>
+
+<rect
+  width="600"
+  height="900"
+  fill="url(#glow)"
+/>
+
+<!-- MOVIE-SPECIFIC ART -->
+
+
+        <circle cx="430" cy="250" r="130"
+          fill="#fb923c"
+          opacity="0.25"/>
+
+        <path
+          d="M0 650
+             L120 470
+             L220 570
+             L320 390
+             L430 560
+             L520 430
+             L600 600
+             L600 900
+             L0 900Z"
+          fill="#111827"
+        />
+
+        <path
+          d="M250 650
+             C180 560 270 510 290 420
+             C360 520 420 560 350 650Z"
+          fill="#f97316"
+        />
+
+        <path
+          d="M280 640
+             C245 575 300 540 315 490
+             C350 550 370 590 330 640Z"
+          fill="#fef3c7"
+        />
+
+        <path
+          d="M70 720 Q150 650 230 720
+                   T390 720 T550 720"
+          fill="none"
+          stroke="#ef4444"
+          stroke-width="10"
+          opacity="0.6"
+        />
+      
+
+<!-- CINEMATIC DARK FADE -->
+
+<rect
+  width="600"
+  height="900"
+  fill="url(#bottomFade)"
+/>
+
+<!-- BRAND -->
+
+<text
+  x="42"
+  y="62"
+  fill="#ffffff"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="22"
+  font-weight="700"
+  letter-spacing="5"
+>
+CINEBOOK
+</text>
+
+<rect
+  x="42"
+  y="80"
+  width="70"
+  height="3"
+  rx="2"
+  fill="#f97316"
+/>
+
+<!-- TITLE -->
+
+<text
+  x="42"
+  y="700"
+  fill="#ffffff"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="42"
+  font-weight="800"
+>
+Kingdom of Fire
+</text>
+
+<!-- GENRE -->
+
+<text
+  x="42"
+  y="742"
+  fill="#ffffff"
+  opacity="0.78"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="15"
+  letter-spacing="1.2"
+>
+Fantasy  •  Action
+</text>
+
+<!-- LANGUAGE -->
+
+<text
+  x="42"
+  y="772"
+  fill="#ffffff"
+  opacity="0.65"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="15"
+>
+English
+</text>
+
+<!-- CERTIFICATE -->
+
+<rect
+  x="42"
+  y="800"
+  width="58"
+  height="30"
+  rx="5"
+  fill="#ffffff"
+  opacity="0.12"
+/>
+
+<text
+  x="71"
+  y="820"
+  text-anchor="middle"
+  fill="#ffffff"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="12"
+  font-weight="700"
+>
+U/A
+</text>
+
+<!-- PLAY ICON -->
+
+<circle
+  cx="525"
+  cy="815"
+  r="32"
+  fill="none"
+  stroke="#f97316"
+  stroke-width="2"
+  opacity="0.8"
+/>
+
+<path
+  d="M516 800 L540 815 L516 830 Z"
+  fill="#f97316"
+/>
+
+<!-- FOOTER -->
+
+<text
+  x="558"
+  y="865"
+  text-anchor="end"
+  fill="#ffffff"
+  opacity="0.45"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="10"
+  letter-spacing="2"
+>
+CINEMATIC EXPERIENCE
+</text>
+
+</svg>

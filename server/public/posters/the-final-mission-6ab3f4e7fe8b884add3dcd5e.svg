@@ -1,0 +1,260 @@
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="600"
+  height="900"
+  viewBox="0 0 600 900"
+>
+
+<defs>
+
+  <linearGradient
+    id="background"
+    x1="0%"
+    y1="0%"
+    x2="100%"
+    y2="100%"
+  >
+    <stop
+      offset="0%"
+      stop-color="#1c0a00"
+    />
+
+    <stop
+      offset="100%"
+      stop-color="#000000"
+    />
+  </linearGradient>
+
+  <radialGradient
+    id="glow"
+    cx="50%"
+    cy="35%"
+    r="60%"
+  >
+    <stop
+      offset="0%"
+      stop-color="#fb923c"
+      stop-opacity="0.22"
+    />
+
+    <stop
+      offset="100%"
+      stop-color="#fb923c"
+      stop-opacity="0"
+    />
+  </radialGradient>
+
+  <linearGradient
+    id="bottomFade"
+    x1="0%"
+    y1="0%"
+    x2="0%"
+    y2="100%"
+  >
+    <stop
+      offset="0%"
+      stop-color="#000000"
+      stop-opacity="0"
+    />
+
+    <stop
+      offset="65%"
+      stop-color="#000000"
+      stop-opacity="0.15"
+    />
+
+    <stop
+      offset="100%"
+      stop-color="#000000"
+      stop-opacity="0.98"
+    />
+  </linearGradient>
+
+</defs>
+
+<!-- BACKGROUND -->
+
+<rect
+  width="600"
+  height="900"
+  fill="url(#background)"
+/>
+
+<rect
+  width="600"
+  height="900"
+  fill="url(#glow)"
+/>
+
+<!-- MOVIE-SPECIFIC ART -->
+
+
+        <circle cx="470" cy="220" r="120"
+          fill="#fed7aa"
+          opacity="0.6"/>
+
+        <path
+          d="M0 620
+             L130 500
+             L240 570
+             L350 470
+             L600 610
+             L600 900
+             L0 900Z"
+          fill="#171717"
+        />
+
+        <path
+          d="M300 430 L350 520 L300 610 L250 520Z"
+          fill="#111827"
+          stroke="#fb923c"
+          stroke-width="4"
+        />
+
+        <rect x="275" y="500"
+          width="50"
+          height="130"
+          fill="#111827"/>
+
+        <path
+          d="M120 360 L250 440
+                   M480 360 L350 440"
+          stroke="#94a3b8"
+          stroke-width="14"
+          opacity="0.5"
+        />
+
+        <circle cx="300" cy="720" r="70"
+          fill="#ea580c"
+          opacity="0.2"/>
+      
+
+<!-- CINEMATIC DARK FADE -->
+
+<rect
+  width="600"
+  height="900"
+  fill="url(#bottomFade)"
+/>
+
+<!-- BRAND -->
+
+<text
+  x="42"
+  y="62"
+  fill="#ffffff"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="22"
+  font-weight="700"
+  letter-spacing="5"
+>
+CINEBOOK
+</text>
+
+<rect
+  x="42"
+  y="80"
+  width="70"
+  height="3"
+  rx="2"
+  fill="#fb923c"
+/>
+
+<!-- TITLE -->
+
+<text
+  x="42"
+  y="700"
+  fill="#ffffff"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="42"
+  font-weight="800"
+>
+The Final Mission
+</text>
+
+<!-- GENRE -->
+
+<text
+  x="42"
+  y="742"
+  fill="#ffffff"
+  opacity="0.78"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="15"
+  letter-spacing="1.2"
+>
+Action  •  Adventure
+</text>
+
+<!-- LANGUAGE -->
+
+<text
+  x="42"
+  y="772"
+  fill="#ffffff"
+  opacity="0.65"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="15"
+>
+English
+</text>
+
+<!-- CERTIFICATE -->
+
+<rect
+  x="42"
+  y="800"
+  width="58"
+  height="30"
+  rx="5"
+  fill="#ffffff"
+  opacity="0.12"
+/>
+
+<text
+  x="71"
+  y="820"
+  text-anchor="middle"
+  fill="#ffffff"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="12"
+  font-weight="700"
+>
+U/A
+</text>
+
+<!-- PLAY ICON -->
+
+<circle
+  cx="525"
+  cy="815"
+  r="32"
+  fill="none"
+  stroke="#fb923c"
+  stroke-width="2"
+  opacity="0.8"
+/>
+
+<path
+  d="M516 800 L540 815 L516 830 Z"
+  fill="#fb923c"
+/>
+
+<!-- FOOTER -->
+
+<text
+  x="558"
+  y="865"
+  text-anchor="end"
+  fill="#ffffff"
+  opacity="0.45"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="10"
+  letter-spacing="2"
+>
+CINEMATIC EXPERIENCE
+</text>
+
+</svg>

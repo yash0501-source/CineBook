@@ -1,0 +1,859 @@
+/* =========================================================
+   CINEBOOK
+   THEATRE + SHOWTIME SELECTION
+   PREMIUM CINEMATIC DESIGN
+   ========================================================= */
+
+.theatre-selection-page {
+  min-height: 100vh;
+
+  padding:
+    110px 6% 70px;
+
+  background:
+    radial-gradient(
+      circle at 15% 5%,
+      rgba(229, 185, 77, 0.12),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 20%,
+      rgba(100, 80, 180, 0.08),
+      transparent 28%
+    ),
+    #070707;
+
+  color: #ffffff;
+}
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+
+.theatre-selection-container {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.theatre-page-header {
+  margin-bottom: 42px;
+}
+
+.header-badge {
+  display: inline-flex;
+
+  margin-bottom: 14px;
+
+  padding: 6px 11px;
+
+  border: 1px solid
+    rgba(229, 185, 77, 0.3);
+
+  border-radius: 6px;
+
+  color: #e5b94d;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+.theatre-page-header h1 {
+  margin: 0;
+
+  font-size:
+    clamp(32px, 5vw, 52px);
+
+  font-weight: 850;
+
+  line-height: 1.05;
+
+  letter-spacing: -1.5px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #ffffff,
+      #e5b94d
+    );
+
+  background-clip: text;
+
+  -webkit-background-clip: text;
+
+  color: transparent;
+
+  -webkit-text-fill-color: transparent;
+}
+
+.movie-title {
+  margin:
+    15px 0 8px;
+
+  font-size: 22px;
+
+  font-weight: 650;
+
+  color: #e5b94d;
+}
+
+.theatre-page-header > p {
+  margin: 0;
+
+  color: #858585;
+
+  font-size: 15px;
+}
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.theatre-error {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 25px;
+
+  padding: 15px 18px;
+
+  background:
+    rgba(220, 70, 70, 0.08);
+
+  border: 1px solid
+    rgba(220, 70, 70, 0.25);
+
+  border-radius: 12px;
+
+  color: #f08080;
+}
+
+.theatre-error span {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+
+  border-radius: 50%;
+
+  background: #c94c4c;
+
+  color: #ffffff;
+
+  font-weight: 800;
+}
+
+/* =========================================================
+   DATE SECTION
+   ========================================================= */
+
+.date-section {
+  margin-bottom: 45px;
+}
+
+.date-section-title {
+  margin-bottom: 15px;
+
+  color: #888888;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  letter-spacing: 1.5px;
+
+  text-transform: uppercase;
+}
+
+.date-selector {
+  display: flex;
+
+  gap: 12px;
+
+  overflow-x: auto;
+
+  padding-bottom: 5px;
+
+  scrollbar-width: thin;
+}
+
+.date-button {
+  flex: 0 0 auto;
+
+  min-width: 92px;
+
+  padding:
+    13px 16px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 3px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #151515,
+      #0d0d0d
+    );
+
+  border: 1px solid #292929;
+
+  border-radius: 13px;
+
+  color: #888888;
+
+  cursor: pointer;
+
+  transition:
+    all 0.2s ease;
+}
+
+.date-button:hover {
+  transform:
+    translateY(-2px);
+
+  border-color:
+    rgba(229, 185, 77, 0.5);
+
+  color: #ffffff;
+}
+
+.date-button.active {
+  background:
+    linear-gradient(
+      135deg,
+      #e5b94d,
+      #c99628
+    );
+
+  border-color: #e5b94d;
+
+  color: #090909;
+
+  box-shadow:
+    0 10px 30px
+    rgba(229, 185, 77, 0.2);
+
+  transform:
+    translateY(-2px);
+}
+
+.date-day {
+  font-size: 11px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+}
+
+.date-number {
+  font-size: 23px;
+
+  font-weight: 850;
+
+  line-height: 1;
+}
+
+.date-month {
+  font-size: 11px;
+
+  font-weight: 600;
+}
+
+/* =========================================================
+   SHOWTIME HEADER
+   ========================================================= */
+
+.shows-section {
+  margin-top: 10px;
+}
+
+.section-heading {
+  display: flex;
+
+  align-items: flex-end;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 20px;
+}
+
+.section-label {
+  margin: 0 0 5px;
+
+  color: #e5b94d;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+.section-heading h2 {
+  margin: 0;
+
+  font-size: 28px;
+
+  font-weight: 750;
+}
+
+.show-count {
+  padding:
+    7px 11px;
+
+  border-radius: 20px;
+
+  background: #151515;
+
+  border: 1px solid #292929;
+
+  color: #888888;
+
+  font-size: 12px;
+}
+
+/* =========================================================
+   THEATRE LIST
+   ========================================================= */
+
+.theatre-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 20px;
+}
+
+/* =========================================================
+   THEATRE CARD
+   ========================================================= */
+
+.theatre-card {
+  position: relative;
+
+  padding: 25px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.018)
+    );
+
+  border: 1px solid #252525;
+
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 15px 45px
+    rgba(0, 0, 0, 0.22);
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.theatre-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 3px;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      #e5b94d,
+      transparent
+    );
+
+  opacity: 0;
+
+  transition:
+    opacity 0.25s ease;
+}
+
+.theatre-card:hover {
+  transform:
+    translateY(-3px);
+
+  border-color:
+    rgba(229, 185, 77, 0.25);
+
+  box-shadow:
+    0 25px 60px
+    rgba(0, 0, 0, 0.35);
+}
+
+.theatre-card:hover::before {
+  opacity: 1;
+}
+
+/* =========================================================
+   THEATRE HEADER
+   ========================================================= */
+
+.theatre-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+.theatre-heading-content {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+}
+
+.theatre-icon {
+  width: 50px;
+  height: 50px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 13px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(229, 185, 77, 0.18),
+      rgba(229, 185, 77, 0.05)
+    );
+
+  border: 1px solid
+    rgba(229, 185, 77, 0.2);
+
+  font-size: 22px;
+}
+
+.theatre-name {
+  margin: 0;
+
+  font-size: 20px;
+
+  font-weight: 750;
+
+  color: #ffffff;
+}
+
+.theatre-location {
+  margin:
+    6px 0 0;
+
+  color: #777777;
+
+  font-size: 13px;
+}
+
+.theatre-show-count {
+  flex-shrink: 0;
+
+  padding:
+    7px 11px;
+
+  border-radius: 8px;
+
+  background: #111111;
+
+  border: 1px solid #292929;
+
+  color: #777777;
+
+  font-size: 11px;
+
+  font-weight: 700;
+}
+
+/* =========================================================
+   SHOWTIME AREA
+   ========================================================= */
+
+.showtime-section {
+  margin-top: 25px;
+
+  padding-top: 22px;
+
+  border-top: 1px solid #252525;
+}
+
+.showtime-title {
+  margin-bottom: 14px;
+
+  color: #777777;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 1.4px;
+
+  text-transform: uppercase;
+}
+
+.showtime-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fill,
+      minmax(145px, 1fr)
+    );
+
+  gap: 12px;
+}
+
+/* =========================================================
+   SHOWTIME BUTTON
+   ========================================================= */
+
+.showtime-button {
+  position: relative;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 125px;
+
+  padding: 16px 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #171717,
+      #0d0d0d
+    );
+
+  border: 1px solid #343434;
+
+  border-radius: 13px;
+
+  color: #ffffff;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.showtime-button:hover {
+  transform:
+    translateY(-4px);
+
+  border-color: #e5b94d;
+
+  background:
+    linear-gradient(
+      145deg,
+      #211d13,
+      #14120d
+    );
+
+  box-shadow:
+    0 12px 30px
+    rgba(229, 185, 77, 0.13);
+}
+
+.showtime-time {
+  font-size: 17px;
+
+  font-weight: 800;
+
+  color: #ffffff;
+}
+
+.showtime-screen {
+  margin-top: 5px;
+
+  color: #777777;
+
+  font-size: 11px;
+}
+
+.showtime-price {
+  margin-top: 10px;
+
+  color: #e5b94d;
+
+  font-size: 12px;
+
+  font-weight: 700;
+}
+
+.show-availability {
+  margin-top: 9px;
+
+  padding:
+    4px 7px;
+
+  border-radius: 5px;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.5px;
+}
+
+.show-availability.available {
+  background:
+    rgba(55, 190, 110, 0.1);
+
+  color: #5ed18b;
+}
+
+/* =========================================================
+   NO SHOWS
+   ========================================================= */
+
+.no-shows {
+  padding:
+    65px 20px;
+
+  text-align: center;
+
+  background:
+    linear-gradient(
+      145deg,
+      #121212,
+      #0c0c0c
+    );
+
+  border: 1px dashed #303030;
+
+  border-radius: 18px;
+}
+
+.empty-icon {
+  margin-bottom: 15px;
+
+  font-size: 36px;
+
+  opacity: 0.6;
+}
+
+.no-shows h3 {
+  margin:
+    0 0 8px;
+
+  font-size: 20px;
+
+  color: #cccccc;
+}
+
+.no-shows p {
+  margin: 0;
+
+  color: #707070;
+
+  font-size: 13px;
+}
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.theatre-loading {
+  min-height: 60vh;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  text-align: center;
+
+  color: #888888;
+}
+
+.loading-spinner {
+  width: 42px;
+  height: 42px;
+
+  margin: 0 auto 18px;
+
+  border:
+    3px solid #282828;
+
+  border-top-color:
+    #e5b94d;
+
+  border-radius: 50%;
+
+  animation:
+    cinebookSpin
+    0.8s linear infinite;
+}
+
+.theatre-loading p {
+  margin: 0;
+
+  font-size: 14px;
+}
+
+@keyframes cinebookSpin {
+  to {
+    transform:
+      rotate(360deg);
+  }
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .theatre-selection-page {
+    padding:
+      100px 20px 55px;
+  }
+
+  .theatre-card {
+    padding: 20px;
+  }
+
+  .showtime-grid {
+    grid-template-columns:
+      repeat(3, 1fr);
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 560px) {
+  .theatre-selection-page {
+    padding:
+      90px 14px 40px;
+  }
+
+  .theatre-page-header h1 {
+    font-size: 32px;
+  }
+
+  .movie-title {
+    font-size: 19px;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+  }
+
+  .section-heading h2 {
+    font-size: 23px;
+  }
+
+  .theatre-header {
+    align-items: flex-start;
+  }
+
+  .theatre-heading-content {
+    align-items: flex-start;
+  }
+
+  .theatre-show-count {
+    display: none;
+  }
+
+  .theatre-name {
+    font-size: 17px;
+  }
+
+  .showtime-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+
+    gap: 9px;
+  }
+
+  .showtime-button {
+    min-height: 115px;
+
+    padding:
+      12px 7px;
+  }
+
+  .showtime-time {
+    font-size: 15px;
+  }
+
+  .date-button {
+    min-width: 82px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 360px) {
+  .showtime-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .showtime-button {
+    min-height: 100px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .theatre-card,
+  .showtime-button,
+  .date-button {
+    transition: none;
+  }
+
+  .loading-spinner {
+    animation: none;
+  }
+}

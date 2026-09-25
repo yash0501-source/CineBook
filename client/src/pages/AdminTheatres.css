@@ -1,0 +1,416 @@
+.admin-theatres-page {
+  min-height: 100vh;
+  padding: 40px 24px 80px;
+  background: #080808;
+  color: #ffffff;
+}
+
+.admin-theatres-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.admin-theatres-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.admin-back-link {
+  display: inline-block;
+  margin-bottom: 14px;
+  color: #d6a84f;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.admin-back-link:hover {
+  color: #f4c76a;
+}
+
+.admin-theatres-header h1 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.admin-theatres-header p {
+  margin: 10px 0 0;
+  color: #999;
+}
+
+.admin-theatres-count {
+  min-width: 130px;
+  padding: 18px 24px;
+  border: 1px solid #292929;
+  border-radius: 16px;
+  background: #111;
+  text-align: center;
+}
+
+.admin-theatres-count span {
+  display: block;
+  color: #e5b65c;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.admin-theatres-count small {
+  color: #999;
+}
+
+.admin-error,
+.admin-success {
+  margin-bottom: 22px;
+  padding: 15px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.admin-error {
+  border: 1px solid #542727;
+  background: #210f0f;
+  color: #ff8585;
+}
+
+.admin-error strong {
+  margin-right: 10px;
+}
+
+.admin-success {
+  border: 1px solid #28543b;
+  background: #0d2117;
+  color: #71df9c;
+}
+
+.admin-theatre-form-card,
+.admin-theatre-list-card {
+  margin-bottom: 28px;
+  padding: 28px;
+  border: 1px solid #292929;
+  border-radius: 20px;
+  background: #101010;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.25);
+}
+
+.admin-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.admin-section-heading h2 {
+  margin: 5px 0 0;
+  font-size: 22px;
+}
+
+.admin-section-heading p {
+  margin: 8px 0 0;
+  color: #858585;
+  font-size: 14px;
+}
+
+.admin-form-label {
+  color: #d9ad55;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.admin-theatre-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.admin-form-full {
+  grid-column: 1 / -1;
+}
+
+.admin-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-form-group label {
+  color: #ddd;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.admin-form-group label span {
+  margin-left: 4px;
+  color: #e5b65c;
+}
+
+.admin-form-group input,
+.admin-form-group select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 15px;
+  border: 1px solid #303030;
+  border-radius: 10px;
+  outline: none;
+  background: #181818;
+  color: #fff;
+  font-size: 14px;
+}
+
+.admin-form-group input::placeholder {
+  color: #666;
+}
+
+.admin-form-group input:focus,
+.admin-form-group select:focus {
+  border-color: #d6a84f;
+}
+
+.admin-form-help {
+  color: #666;
+  font-size: 12px;
+}
+
+.admin-theatre-form-footer {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.admin-primary-button,
+.admin-secondary-button,
+.admin-edit-button,
+.admin-delete-button {
+  border-radius: 9px;
+  padding: 11px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-primary-button {
+  border: none;
+  background: linear-gradient(135deg, #d6a84f, #f0c66d);
+  color: #090909;
+}
+
+.admin-secondary-button {
+  border: 1px solid #343434;
+  background: #181818;
+  color: #ddd;
+}
+
+.admin-edit-button {
+  border: 1px solid #5a4825;
+  background: #211b10;
+  color: #e7bd69;
+}
+
+.admin-delete-button {
+  border: 1px solid #5a2929;
+  background: #210f0f;
+  color: #ff7777;
+}
+
+.admin-primary-button:disabled,
+.admin-secondary-button:disabled,
+.admin-edit-button:disabled,
+.admin-delete-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-theatre-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #292929;
+  border-radius: 14px;
+}
+
+.admin-theatre-table {
+  width: 100%;
+  min-width: 1050px;
+  border-collapse: collapse;
+}
+
+.admin-theatre-table th {
+  padding: 16px;
+  border-bottom: 1px solid #292929;
+  background: #151515;
+  color: #888;
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.admin-theatre-table td {
+  padding: 17px 16px;
+  border-bottom: 1px solid #222;
+  color: #ccc;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.admin-theatre-table tbody tr:hover {
+  background: #151515;
+}
+
+.admin-theatre-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 210px;
+}
+
+.admin-theatre-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #4d3d20;
+  border-radius: 10px;
+  background: #19150e;
+  font-size: 18px;
+}
+
+.admin-theatre-name strong {
+  display: block;
+  color: #fff;
+}
+
+.admin-theatre-name small {
+  display: block;
+  margin-top: 4px;
+  color: #606060;
+  font-size: 10px;
+}
+
+.admin-theatre-address {
+  max-width: 230px;
+  color: #aaa;
+  line-height: 1.5;
+}
+
+.admin-facilities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  max-width: 260px;
+}
+
+.admin-facilities span {
+  padding: 5px 8px;
+  border: 1px solid #303030;
+  border-radius: 6px;
+  background: #181818;
+  color: #999;
+  font-size: 10px;
+}
+
+.theatre-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.theatre-status.active {
+  background: #0d2117;
+  color: #72dc9b;
+}
+
+.theatre-status.inactive {
+  background: #210f0f;
+  color: #ff8585;
+}
+
+.theatre-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.admin-theatre-actions {
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.admin-loading,
+.admin-empty-state {
+  padding: 55px 20px;
+  border: 1px dashed #303030;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.admin-loading {
+  color: #999;
+}
+
+.admin-empty-state h3 {
+  margin: 0 0 8px;
+}
+
+.admin-empty-state p {
+  margin: 0;
+  color: #666;
+}
+
+@media (max-width: 900px) {
+  .admin-theatres-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-theatres-count {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .admin-theatre-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-form-full {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-theatres-page {
+    padding: 25px 16px 60px;
+  }
+
+  .admin-theatres-header h1 {
+    font-size: 28px;
+  }
+
+  .admin-theatre-form-card,
+  .admin-theatre-list-card {
+    padding: 18px;
+  }
+
+  .admin-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-theatre-form-footer {
+    flex-direction: column;
+  }
+
+  .admin-theatre-form-footer button {
+    width: 100%;
+  }
+}

@@ -1,0 +1,252 @@
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="600"
+  height="900"
+  viewBox="0 0 600 900"
+>
+
+<defs>
+
+  <linearGradient
+    id="background"
+    x1="0%"
+    y1="0%"
+    x2="100%"
+    y2="100%"
+  >
+    <stop
+      offset="0%"
+      stop-color="#030014"
+    />
+
+    <stop
+      offset="100%"
+      stop-color="#000000"
+    />
+  </linearGradient>
+
+  <radialGradient
+    id="glow"
+    cx="50%"
+    cy="35%"
+    r="60%"
+  >
+    <stop
+      offset="0%"
+      stop-color="#c084fc"
+      stop-opacity="0.22"
+    />
+
+    <stop
+      offset="100%"
+      stop-color="#c084fc"
+      stop-opacity="0"
+    />
+  </radialGradient>
+
+  <linearGradient
+    id="bottomFade"
+    x1="0%"
+    y1="0%"
+    x2="0%"
+    y2="100%"
+  >
+    <stop
+      offset="0%"
+      stop-color="#000000"
+      stop-opacity="0"
+    />
+
+    <stop
+      offset="65%"
+      stop-color="#000000"
+      stop-opacity="0.15"
+    />
+
+    <stop
+      offset="100%"
+      stop-color="#000000"
+      stop-opacity="0.98"
+    />
+  </linearGradient>
+
+</defs>
+
+<!-- BACKGROUND -->
+
+<rect
+  width="600"
+  height="900"
+  fill="url(#background)"
+/>
+
+<rect
+  width="600"
+  height="900"
+  fill="url(#glow)"
+/>
+
+<!-- MOVIE-SPECIFIC ART -->
+
+
+        <ellipse
+          cx="350"
+          cy="330"
+          rx="260"
+          ry="90"
+          fill="none"
+          stroke="#a855f7"
+          stroke-width="45"
+          opacity="0.35"
+          transform="rotate(-25 350 330)"
+        />
+
+        <circle cx="350" cy="330" r="55"
+          fill="#fef3c7"/>
+
+        <circle cx="110" cy="220" r="40"
+          fill="#2563eb"
+          opacity="0.6"/>
+
+        <circle cx="520" cy="470" r="65"
+          fill="#7c3aed"
+          opacity="0.4"/>
+
+        <path
+          d="M70 690 L250 610 L390 660 L540 590"
+          stroke="#22d3ee"
+          stroke-width="8"
+          fill="none"
+          opacity="0.7"
+        />
+      
+
+<!-- CINEMATIC DARK FADE -->
+
+<rect
+  width="600"
+  height="900"
+  fill="url(#bottomFade)"
+/>
+
+<!-- BRAND -->
+
+<text
+  x="42"
+  y="62"
+  fill="#ffffff"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="22"
+  font-weight="700"
+  letter-spacing="5"
+>
+CINEBOOK
+</text>
+
+<rect
+  x="42"
+  y="80"
+  width="70"
+  height="3"
+  rx="2"
+  fill="#c084fc"
+/>
+
+<!-- TITLE -->
+
+<text
+  x="42"
+  y="700"
+  fill="#ffffff"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="42"
+  font-weight="800"
+>
+Galaxy Beyond
+</text>
+
+<!-- GENRE -->
+
+<text
+  x="42"
+  y="742"
+  fill="#ffffff"
+  opacity="0.78"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="15"
+  letter-spacing="1.2"
+>
+Sci-Fi  •  Adventure
+</text>
+
+<!-- LANGUAGE -->
+
+<text
+  x="42"
+  y="772"
+  fill="#ffffff"
+  opacity="0.65"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="15"
+>
+English
+</text>
+
+<!-- CERTIFICATE -->
+
+<rect
+  x="42"
+  y="800"
+  width="58"
+  height="30"
+  rx="5"
+  fill="#ffffff"
+  opacity="0.12"
+/>
+
+<text
+  x="71"
+  y="820"
+  text-anchor="middle"
+  fill="#ffffff"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="12"
+  font-weight="700"
+>
+U/A
+</text>
+
+<!-- PLAY ICON -->
+
+<circle
+  cx="525"
+  cy="815"
+  r="32"
+  fill="none"
+  stroke="#c084fc"
+  stroke-width="2"
+  opacity="0.8"
+/>
+
+<path
+  d="M516 800 L540 815 L516 830 Z"
+  fill="#c084fc"
+/>
+
+<!-- FOOTER -->
+
+<text
+  x="558"
+  y="865"
+  text-anchor="end"
+  fill="#ffffff"
+  opacity="0.45"
+  font-family="Arial, Helvetica, sans-serif"
+  font-size="10"
+  letter-spacing="2"
+>
+CINEMATIC EXPERIENCE
+</text>
+
+</svg>
