@@ -3,29 +3,32 @@ const express = require("express");
 const {
   signup,
   login,
-  getProfile,
+  getMe,
 } = require("../controllers/authController");
 
-const {
-  protect,
-} = require("../middleware/authMiddleware");
+const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.post(
-  "/signup",
-  signup
-);
+// ===============================
+// PUBLIC AUTH ROUTES
+// ===============================
 
-router.post(
-  "/login",
-  login
-);
+// Register / Signup
+router.post("/signup", signup);
 
-router.get(
-  "/profile",
-  protect,
-  getProfile
-);
+// Register alias
+// Supports frontend requests using /register
+router.post("/register", signup);
+
+// Login
+router.post("/login", login);
+
+// ===============================
+// PROTECTED AUTH ROUTES
+// ===============================
+
+// Get currently logged-in user
+router.get("/me", protect, getMe);
 
 module.exports = router;
