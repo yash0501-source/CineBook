@@ -20,11 +20,7 @@ function Home() {
 
         setMovies(movieData);
       } catch (error) {
-        console.error(
-          "Failed to load movies:",
-          error
-        );
-
+        console.error("Failed to load movies:", error);
         setMovies([]);
       } finally {
         setLoading(false);
@@ -35,24 +31,23 @@ function Home() {
   }, []);
 
   const nowShowingMovies = movies
-    .filter(
-      (movie) =>
-        movie.status === "now_showing"
-    )
+    .filter((movie) => movie.status === "now_showing")
     .slice(0, 4);
 
   const upcomingMovies = movies
-    .filter(
-      (movie) =>
-        movie.status === "upcoming"
-    )
+    .filter((movie) => movie.status === "upcoming")
     .slice(0, 4);
+
+  // ========================================
+  // PRODUCTION-SAFE POSTER URL
+  // ========================================
 
   const getPosterUrl = (poster) => {
     if (!poster) {
       return "";
     }
 
+    // Already a complete URL
     if (
       poster.startsWith("http://") ||
       poster.startsWith("https://")
@@ -60,8 +55,22 @@ function Home() {
       return poster;
     }
 
-    return `http://localhost:5000${poster}`;
+    // Get backend URL from Vercel environment variable
+    const apiBaseUrl =
+      import.meta.env.VITE_API_URL ||
+      "http://localhost:5000/api";
+
+    // Remove /api from the backend URL
+    const backendUrl = apiBaseUrl.replace(/\/api\/?$/, "");
+
+    return `${backendUrl}${
+      poster.startsWith("/") ? poster : `/${poster}`
+    }`;
   };
+
+  // ========================================
+  // MOVIE CARD
+  // ========================================
 
   const MovieCard = ({ movie }) => {
     return (
@@ -76,6 +85,10 @@ function Home() {
             <img
               src={getPosterUrl(movie.poster)}
               alt={movie.title}
+              loading="lazy"
+              onError={(event) => {
+                event.currentTarget.style.display = "none";
+              }}
             />
           ) : (
             <div className="movie-poster-fallback">
@@ -93,9 +106,7 @@ function Home() {
               : movie.genre || ""}
           </p>
 
-          <span>
-            {movie.language}
-          </span>
+          <span>{movie.language}</span>
         </div>
       </div>
     );
@@ -104,7 +115,9 @@ function Home() {
   return (
     <div className="home-page">
 
-      {/* Hero Section */}
+      {/* ========================================
+          HERO SECTION
+      ======================================== */}
 
       <section className="hero">
         <div className="hero-content">
@@ -129,18 +142,14 @@ function Home() {
 
             <button
               className="primary-button"
-              onClick={() =>
-                navigate("/movies")
-              }
+              onClick={() => navigate("/movies")}
             >
               Explore Movies
             </button>
 
             <button
               className="secondary-button"
-              onClick={() =>
-                navigate("/bookings")
-              }
+              onClick={() => navigate("/bookings")}
             >
               View Bookings
             </button>
@@ -150,7 +159,9 @@ function Home() {
         </div>
       </section>
 
-      {/* Currently Showing */}
+      {/* ========================================
+          CURRENTLY SHOWING
+      ======================================== */}
 
       <section className="movie-section">
 
@@ -168,9 +179,7 @@ function Home() {
 
           <button
             className="view-all-button"
-            onClick={() =>
-              navigate("/movies")
-            }
+            onClick={() => navigate("/movies")}
           >
             View All →
           </button>
@@ -179,9 +188,6 @@ function Home() {
 
         {loading ? (
           <div className="movie-placeholder-grid">
-            <div className="movie-placeholder">
-              Loading...
-            </div>
 
             <div className="movie-placeholder">
               Loading...
@@ -194,18 +200,21 @@ function Home() {
             <div className="movie-placeholder">
               Loading...
             </div>
+
+            <div className="movie-placeholder">
+              Loading...
+            </div>
+
           </div>
         ) : nowShowingMovies.length > 0 ? (
           <div className="movie-placeholder-grid">
 
-            {nowShowingMovies.map(
-              (movie) => (
-                <MovieCard
-                  key={movie._id}
-                  movie={movie}
-                />
-              )
-            )}
+            {nowShowingMovies.map((movie) => (
+              <MovieCard
+                key={movie._id}
+                movie={movie}
+              />
+            ))}
 
           </div>
         ) : (
@@ -220,7 +229,9 @@ function Home() {
 
       </section>
 
-      {/* Upcoming */}
+      {/* ========================================
+          UPCOMING MOVIES
+      ======================================== */}
 
       <section className="movie-section">
 
@@ -261,14 +272,12 @@ function Home() {
         ) : upcomingMovies.length > 0 ? (
           <div className="movie-placeholder-grid">
 
-            {upcomingMovies.map(
-              (movie) => (
-                <MovieCard
-                  key={movie._id}
-                  movie={movie}
-                />
-              )
-            )}
+            {upcomingMovies.map((movie) => (
+              <MovieCard
+                key={movie._id}
+                movie={movie}
+              />
+            ))}
 
           </div>
         ) : (
