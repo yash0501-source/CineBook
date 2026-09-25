@@ -14,10 +14,7 @@ const router = express.Router();
 // REGISTER
 // ========================================
 
-// Original signup route
 router.post("/signup", signup);
-
-// Register alias for frontend
 router.post("/register", signup);
 
 // ========================================
@@ -30,6 +27,10 @@ router.post("/login", login);
 // CURRENT USER
 // ========================================
 
+// Existing route
 router.get("/me", protect, getMe);
+
+// Profile alias for frontend
+router.get("/profile", protect, getMe);
 
 module.exports = router;
