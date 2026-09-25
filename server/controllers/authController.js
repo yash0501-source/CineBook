@@ -1,241 +1,155 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
 const User = require("../models/User");
 
-const generateToken = (user) => {
+const generateToken = (userId) => {
   return jwt.sign(
-    {
-      id: user._id.toString(),
-      email: user.email,
-      role: user.role,
-    },
+    { id: userId },
     process.env.JWT_SECRET,
-    {
-      expiresIn: "7d",
-    }
+    { expiresIn: "7d" }
   );
 };
 
-// ==========================================
-// SIGNUP
-// ==========================================
-
+// ===============================
+// REGISTER / SIGNUP
+// ===============================
 const signup = async (req, res) => {
   try {
-    const {
-      name,
-      email,
-      password,
-      phone,
-    } = req.body;
+    const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message:
-          "Name, email and password are required.",
+        message: "Name, email and password are required",
       });
     }
 
-    const normalizedEmail =
-      email.trim().toLowerCase();
-
-    const existingUser =
-      await User.findOne({
-        email: normalizedEmail,
-      });
-
-    if (existingUser) {
-      return res.status(409).json({
-        success: false,
-        message:
-          "An account with this email already exists.",
-      });
-    }
-
-    const hashedPassword =
-      await bcrypt.hash(password, 10);
-
-    const user = await User.create({
-      name: name.trim(),
-      email: normalizedEmail,
-      password: hashedPassword,
-      phone: phone || "",
-      role: "user",
+    const existingUser = await User.findOne({
+      email: email.toLowerCase(),
     });
 
-    const token =
-      generateToken(user);
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User already exists",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      name,
+      email: email.toLowerCase(),
+      password: hashedPassword,
+    });
+
+    const token = generateToken(user._id);
 
     return res.status(201).json({
       success: true,
-      message:
-        "Account created successfully.",
+      message: "Registration successful",
       token,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
-        phone: user.phone,
         role: user.role,
       },
     });
   } catch (error) {
-    console.error(
-      "SIGNUP ERROR:",
-      error
-    );
+    console.error("Signup error:", error);
 
     return res.status(500).json({
       success: false,
-      message:
-        "Failed to create account.",
+      message: "Server error during registration",
     });
   }
 };
 
-// ==========================================
+// ===============================
 // LOGIN
-// ==========================================
-
+// ===============================
 const login = async (req, res) => {
   try {
-    const {
-      email,
-      password,
-    } = req.body;
+    const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message:
-          "Email and password are required.",
+        message: "Email and password are required",
       });
     }
 
-    const normalizedEmail =
-      email.trim().toLowerCase();
-
-    const user =
-      await User.findOne({
-        email: normalizedEmail,
-      }).select("+password");
+    const user = await User.findOne({
+      email: email.toLowerCase(),
+    });
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message:
-          "Invalid email or password.",
+        message: "Invalid email or password",
       });
     }
 
-    const passwordMatch =
-      await bcrypt.compare(
-        password,
-        user.password
-      );
+    const isPasswordCorrect = await bcrypt.compare(
+      password,
+      user.password
+    );
 
-    if (!passwordMatch) {
+    if (!isPasswordCorrect) {
       return res.status(401).json({
         success: false,
-        message:
-          "Invalid email or password.",
+        message: "Invalid email or password",
       });
     }
 
-    const token =
-      generateToken(user);
+    const token = generateToken(user._id);
 
     return res.status(200).json({
       success: true,
-      message:
-        "Login successful.",
+      message: "Login successful",
       token,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
-        phone: user.phone,
         role: user.role,
       },
     });
   } catch (error) {
-    console.error(
-      "LOGIN ERROR:",
-      error
-    );
+    console.error("Login error:", error);
 
     return res.status(500).json({
       success: false,
-      message:
-        "Login failed.",
+      message: "Server error during login",
     });
   }
 };
 
-// ==========================================
-// GET PROFILE
-// ==========================================
-
-const getProfile = async (
-  req,
-  res
-) => {
+// ===============================
+// GET CURRENT USER
+// ===============================
+const getMe = async (req, res) => {
   try {
-    if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        message:
-          "User authentication required.",
-      });
-    }
-
-    const userId =
-      req.user.id ||
-      req.user._id;
-
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message:
-          "Invalid authentication token.",
-      });
-    }
-
-    const user =
-      await User.findById(
-        userId
-      ).select("-password");
+    const user = await User.findById(req.user.id).select("-password");
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message:
-          "User not found.",
+        message: "User not found",
       });
     }
 
     return res.status(200).json({
       success: true,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-      },
+      user,
     });
   } catch (error) {
-    console.error(
-      "GET PROFILE ERROR:",
-      error
-    );
+    console.error("Get current user error:", error);
 
     return res.status(500).json({
       success: false,
-      message:
-        "Unable to load your profile.",
+      message: "Server error while fetching user",
     });
   }
 };
@@ -243,5 +157,5 @@ const getProfile = async (
 module.exports = {
   signup,
   login,
-  getProfile,
+  getMe,
 };

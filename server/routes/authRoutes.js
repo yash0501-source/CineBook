@@ -10,25 +10,26 @@ const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// ===============================
-// PUBLIC AUTH ROUTES
-// ===============================
+// ========================================
+// REGISTER
+// ========================================
 
-// Register / Signup
+// Original signup route
 router.post("/signup", signup);
 
-// Register alias
-// Supports frontend requests using /register
+// Register alias for frontend
 router.post("/register", signup);
 
-// Login
+// ========================================
+// LOGIN
+// ========================================
+
 router.post("/login", login);
 
-// ===============================
-// PROTECTED AUTH ROUTES
-// ===============================
+// ========================================
+// CURRENT USER
+// ========================================
 
-// Get currently logged-in user
 router.get("/me", protect, getMe);
 
 module.exports = router;
