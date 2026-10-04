@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
+
+import api from "../services/api";
 
 function Confirmation() {
   const location = useLocation();
@@ -27,17 +29,134 @@ function Confirmation() {
 
   const totalAmount =
     location.state?.totalAmount ??
+    booking?.totalAmount ??
     booking?.amount ??
     0;
 
+  const [movieTitle, setMovieTitle] =
+    useState("Loading...");
+
+  const [theatreName, setTheatreName] =
+    useState("Loading...");
+
   /* =====================================================
-     GET THE REAL BOOKING ID
+     BOOKING ID
      ===================================================== */
 
   const bookingId =
+    location.state?.bookingId ||
+    booking?.id ||
     booking?.bookingId ||
     booking?._id ||
     "";
+
+  /* =====================================================
+     GET MOVIE + THEATRE DETAILS
+     ===================================================== */
+
+  useEffect(() => {
+    const loadDetails = async () => {
+      try {
+        /* ---------------- MOVIE ---------------- */
+
+        const movieId =
+          location.state?.movieId ||
+          booking?.movie ||
+          show?.movie?.id ||
+          show?.movie?._id ||
+          show?.movieId ||
+          show?.movie;
+
+        if (movieId) {
+          try {
+            const movieResponse =
+              await api.get(
+                `/movies/${movieId}`
+              );
+
+            const movie =
+              movieResponse.data?.movie ||
+              movieResponse.data?.data ||
+              movieResponse.data;
+
+            if (movie?.title) {
+              setMovieTitle(movie.title);
+            } else {
+              setMovieTitle("Movie");
+            }
+          } catch (error) {
+            console.error(
+              "MOVIE LOAD ERROR:",
+              error
+            );
+
+            setMovieTitle("Movie");
+          }
+        } else {
+          setMovieTitle("Movie");
+        }
+
+        /* ---------------- THEATRE ---------------- */
+
+        const theatreId =
+          location.state?.theatreId ||
+          booking?.theatre ||
+          show?.theatre?.id ||
+          show?.theatre?._id ||
+          show?.theatre;
+
+        if (theatreId) {
+          try {
+            const theatreResponse =
+              await api.get(
+                `/theatres/${theatreId}`
+              );
+
+            const theatre =
+              theatreResponse.data?.theatre ||
+              theatreResponse.data?.data ||
+              theatreResponse.data;
+
+            if (theatre?.name) {
+              setTheatreName(
+                theatre.name
+              );
+            } else {
+              setTheatreName(
+                String(theatreId)
+              );
+            }
+          } catch (error) {
+            console.error(
+              "THEATRE LOAD ERROR:",
+              error
+            );
+
+            setTheatreName(
+              String(theatreId)
+            );
+          }
+        } else {
+          setTheatreName("Theatre");
+        }
+
+      } catch (error) {
+        console.error(
+          "CONFIRMATION DETAILS ERROR:",
+          error
+        );
+
+        setMovieTitle("Movie");
+        setTheatreName("Theatre");
+      }
+    };
+
+    loadDetails();
+  }, [
+    booking,
+    show,
+    location.state,
+  ]);
 
   /* =====================================================
      SAVE BOOKING INFORMATION
@@ -53,13 +172,11 @@ function Confirmation() {
       return;
     }
 
-    // This is the ID the Digital Ticket page will use.
     localStorage.setItem(
       "cinebookLastBookingId",
       String(bookingId)
     );
 
-    // Save complete booking.
     if (booking) {
       localStorage.setItem(
         "cinebookLastBooking",
@@ -67,7 +184,6 @@ function Confirmation() {
       );
     }
 
-    // Save payment if available.
     if (payment) {
       localStorage.setItem(
         "cinebookLastPayment",
@@ -108,34 +224,28 @@ function Confirmation() {
           paymentMethod,
           totalAmount,
           bookingId,
+          movieTitle,
+          theatreName,
         },
       }
     );
   };
 
   /* =====================================================
-     HELPERS
+     DATE / TIME / SEATS
      ===================================================== */
-
-  const movieTitle =
-    booking?.movieTitle ||
-    show?.movie?.title ||
-    "Movie";
-
-  const theatreName =
-    booking?.theatre ||
-    show?.theatre?.name ||
-    "Theatre";
 
   const date =
     booking?.date ||
     show?.date ||
+    location.state?.date ||
     "";
 
   const time =
     booking?.time ||
     show?.time ||
     show?.startTime ||
+    location.state?.time ||
     "";
 
   const seats =
@@ -161,8 +271,6 @@ function Confirmation() {
 
       <div className="confirmation-card">
 
-        {/* SUCCESS */}
-
         <div className="success-icon">
           ✓
         </div>
@@ -180,9 +288,9 @@ function Confirmation() {
           been confirmed successfully.
         </p>
 
-        {/* DETAILS */}
-
         <div className="confirmation-details">
+
+          {/* MOVIE */}
 
           <div>
             <span>
@@ -194,6 +302,8 @@ function Confirmation() {
             </strong>
           </div>
 
+          {/* THEATRE */}
+
           <div>
             <span>
               Theatre
@@ -203,6 +313,8 @@ function Confirmation() {
               {theatreName}
             </strong>
           </div>
+
+          {/* DATE */}
 
           <div>
             <span>
@@ -225,6 +337,8 @@ function Confirmation() {
             </strong>
           </div>
 
+          {/* TIME */}
+
           <div>
             <span>
               Showtime
@@ -234,6 +348,8 @@ function Confirmation() {
               {time || "N/A"}
             </strong>
           </div>
+
+          {/* SEATS */}
 
           <div>
             <span>
@@ -247,6 +363,8 @@ function Confirmation() {
             </strong>
           </div>
 
+          {/* PAYMENT */}
+
           <div>
             <span>
               Payment
@@ -256,6 +374,8 @@ function Confirmation() {
               {paymentMethod}
             </strong>
           </div>
+
+          {/* BOOKING ID */}
 
           <div>
             <span>
@@ -267,7 +387,10 @@ function Confirmation() {
             </strong>
           </div>
 
+          {/* TOTAL */}
+
           <div className="confirmation-total">
+
             <span>
               Total
             </span>
@@ -275,20 +398,17 @@ function Confirmation() {
             <strong>
               ₹{formattedAmount}
             </strong>
+
           </div>
 
         </div>
-
-        {/* ACTIONS */}
 
         <div className="confirmation-actions">
 
           <button
             type="button"
             className="ticket-button"
-            onClick={
-              handleTicket
-            }
+            onClick={handleTicket}
           >
             🎟 View Digital Ticket
           </button>

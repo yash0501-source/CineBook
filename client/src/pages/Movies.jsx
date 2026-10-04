@@ -8,15 +8,20 @@ function Movies() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // =====================================================
+  // LOAD MOVIES
+  // =====================================================
+
   useEffect(() => {
     const fetchMovies = async () => {
       try {
         const response = await api.get("/movies");
 
-        const movieData =
-          response.data?.movies ||
-          response.data?.data ||
-          [];
+        const movieData = Array.isArray(response.data)
+          ? response.data
+          : response.data?.movies ||
+            response.data?.data ||
+            [];
 
         setMovies(movieData);
       } catch (error) {
@@ -30,26 +35,42 @@ function Movies() {
     fetchMovies();
   }, []);
 
+  // =====================================================
+  // POSTER URL
+  // =====================================================
+
   const getPosterUrl = (poster) => {
     if (!poster) {
       return "";
     }
 
+    const posterString = String(poster).trim();
+
+    // Already a complete URL
     if (
-      poster.startsWith("http://") ||
-      poster.startsWith("https://")
+      posterString.startsWith("http://") ||
+      posterString.startsWith("https://")
     ) {
-      return poster;
+      return posterString;
     }
 
+    // Java Spring Boot backend
     const apiBaseUrl =
       import.meta.env.VITE_API_URL ||
-      "http://localhost:5000/api";
+      "http://localhost:8080/api";
 
     const backendUrl = apiBaseUrl.replace(/\/api\/?$/, "");
 
-    return `${backendUrl}${poster.startsWith("/") ? poster : `/${poster}`}`;
+    return `${backendUrl}${
+      posterString.startsWith("/")
+        ? posterString
+        : `/${posterString}`
+    }`;
   };
+
+  // =====================================================
+  // LOADING
+  // =====================================================
 
   if (loading) {
     return (
@@ -69,6 +90,10 @@ function Movies() {
     );
   }
 
+  // =====================================================
+  // PAGE
+  // =====================================================
+
   return (
     <div className="movies-page">
 
@@ -84,8 +109,7 @@ function Movies() {
         </h1>
 
         <p>
-          Explore currently showing and
-          upcoming movies.
+          Explore currently showing and upcoming movies.
         </p>
       </section>
 
@@ -94,6 +118,7 @@ function Movies() {
       <section className="movies-section">
 
         <div className="section-heading">
+
           <div>
             <p className="section-label">
               ALL MOVIES
@@ -107,22 +132,26 @@ function Movies() {
           <span>
             {movies.length} movies
           </span>
+
         </div>
 
         {movies.length === 0 ? (
+
           <div className="movie-placeholder">
             No movies available.
           </div>
+
         ) : (
+
           <div className="movie-grid">
 
             {movies.map((movie) => (
 
               <div
                 className="movie-card"
-                key={movie._id}
+                key={movie.id}
                 onClick={() =>
-                  navigate(`/movies/${movie._id}`)
+                  navigate(`/movies/${movie.id}`)
                 }
               >
 
@@ -131,20 +160,30 @@ function Movies() {
                 <div className="movie-poster">
 
                   {movie.poster ? (
+
                     <img
                       src={getPosterUrl(movie.poster)}
                       alt={movie.title}
                       loading="lazy"
                       onError={(event) => {
-                        event.currentTarget.style.display = "none";
+                        console.error(
+                          "MOVIE POSTER FAILED:",
+                          getPosterUrl(movie.poster)
+                        );
+
+                        event.currentTarget.style.display =
+                          "none";
                       }}
                     />
+
                   ) : (
+
                     <div className="movie-poster-fallback">
                       <span>
                         {movie.title}
                       </span>
                     </div>
+
                   )}
 
                 </div>
@@ -196,6 +235,7 @@ function Movies() {
             ))}
 
           </div>
+
         )}
 
       </section>

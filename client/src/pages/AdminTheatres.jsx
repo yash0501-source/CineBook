@@ -32,9 +32,13 @@ function AdminTheatres() {
       setLoading(true);
       setError("");
 
-      const response = await api.get("/admin/theatres");
+      const response = await api.get("/theatres");
 
-      setTheatres(response.data?.theatres || []);
+      const theatreList = Array.isArray(response.data)
+        ? response.data
+        : response.data?.theatres || [];
+
+      setTheatres(theatreList);
     } catch (error) {
       console.error(
         "GET THEATRES ERROR:",
@@ -117,7 +121,9 @@ function AdminTheatres() {
 
       const payload = {
         name: form.name.trim(),
+
         city: form.city.trim(),
+
         address: form.address.trim(),
 
         facilities: form.facilities
@@ -130,7 +136,7 @@ function AdminTheatres() {
 
       if (editingId) {
         const response = await api.put(
-          `/admin/theatres/${editingId}`,
+          `/theatres/${editingId}`,
           payload
         );
 
@@ -140,7 +146,7 @@ function AdminTheatres() {
         );
       } else {
         const response = await api.post(
-          "/admin/theatres",
+          "/theatres",
           payload
         );
 
@@ -151,6 +157,7 @@ function AdminTheatres() {
       }
 
       resetForm();
+
       await fetchTheatres();
     } catch (error) {
       console.error(
@@ -172,18 +179,23 @@ function AdminTheatres() {
   // ========================================
 
   const handleEdit = (theatre) => {
-    setEditingId(theatre._id);
+    setEditingId(theatre.id);
 
     setForm({
       name: theatre.name || "",
+
       city: theatre.city || "",
+
       address: theatre.address || "",
 
-      facilities: Array.isArray(theatre.facilities)
+      facilities: Array.isArray(
+        theatre.facilities
+      )
         ? theatre.facilities.join(", ")
         : "",
 
-      status: theatre.status || "active",
+      status:
+        theatre.status || "active",
     });
 
     setError("");
@@ -201,7 +213,7 @@ function AdminTheatres() {
 
   const handleDelete = async (theatreId) => {
     const theatre = theatres.find(
-      (item) => item._id === theatreId
+      (item) => item.id === theatreId
     );
 
     if (!theatre) {
@@ -210,7 +222,7 @@ function AdminTheatres() {
     }
 
     const confirmed = window.confirm(
-      `Are you sure you want to delete "${theatre.name}"?\n\nUnused screens and shows belonging to this theatre will also be deleted.`
+      `Are you sure you want to delete "${theatre.name}"?`
     );
 
     if (!confirmed) {
@@ -223,7 +235,7 @@ function AdminTheatres() {
       setSuccess("");
 
       const response = await api.delete(
-        `/admin/theatres/${theatreId}`
+        `/theatres/${theatreId}`
       );
 
       setSuccess(
@@ -267,14 +279,15 @@ function AdminTheatres() {
 
   return (
     <div className="admin-theatres-page">
+
       <div className="admin-theatres-container">
 
-        {/* ==================================
-            HEADER
-        ================================== */}
+        {/* HEADER */}
 
         <div className="admin-theatres-header">
+
           <div>
+
             <Link
               to="/admin"
               className="admin-back-link"
@@ -282,34 +295,48 @@ function AdminTheatres() {
               ← Back to Dashboard
             </Link>
 
-            <h1>Theatre Management</h1>
+            <h1>
+              Theatre Management
+            </h1>
 
             <p>
-              Manage CineBook theatres, locations
-              and facilities.
+              Manage CineBook theatres,
+              locations and facilities.
             </p>
+
           </div>
 
           <div className="admin-theatres-count">
-            <span>{theatres.length}</span>
-            <small>Total Theatres</small>
+
+            <span>
+              {theatres.length}
+            </span>
+
+            <small>
+              Total Theatres
+            </small>
+
           </div>
+
         </div>
 
-        {/* ==================================
-            ERROR
-        ================================== */}
+        {/* ERROR */}
 
         {error && (
           <div className="admin-error theatre-error">
-            <strong>Action failed</strong>
-            <span>{error}</span>
+
+            <strong>
+              Action failed
+            </strong>
+
+            <span>
+              {error}
+            </span>
+
           </div>
         )}
 
-        {/* ==================================
-            SUCCESS
-        ================================== */}
+        {/* SUCCESS */}
 
         {success && (
           <div className="admin-success theatre-success">
@@ -317,14 +344,14 @@ function AdminTheatres() {
           </div>
         )}
 
-        {/* ==================================
-            CREATE / EDIT FORM
-        ================================== */}
+        {/* CREATE / EDIT FORM */}
 
         <section className="admin-theatre-form-card">
 
           <div className="admin-section-heading">
+
             <div>
+
               <span className="admin-form-label">
                 {editingId
                   ? "EDIT THEATRE"
@@ -338,9 +365,10 @@ function AdminTheatres() {
               </h2>
 
               <p>
-                Enter the theatre information used
-                throughout CineBook.
+                Enter the theatre information
+                used throughout CineBook.
               </p>
+
             </div>
 
             {editingId && (
@@ -353,6 +381,7 @@ function AdminTheatres() {
                 Cancel Edit
               </button>
             )}
+
           </div>
 
           <form
@@ -365,6 +394,7 @@ function AdminTheatres() {
               {/* NAME */}
 
               <div className="admin-form-group">
+
                 <label htmlFor="theatre-name">
                   Theatre Name
                   <span>*</span>
@@ -379,11 +409,13 @@ function AdminTheatres() {
                   placeholder="Example: CineBook Grand Central"
                   disabled={saving}
                 />
+
               </div>
 
               {/* CITY */}
 
               <div className="admin-form-group">
+
                 <label htmlFor="theatre-city">
                   City
                   <span>*</span>
@@ -398,11 +430,13 @@ function AdminTheatres() {
                   placeholder="Example: Mumbai"
                   disabled={saving}
                 />
+
               </div>
 
               {/* ADDRESS */}
 
               <div className="admin-form-group admin-form-full">
+
                 <label htmlFor="theatre-address">
                   Address
                   <span>*</span>
@@ -417,11 +451,13 @@ function AdminTheatres() {
                   placeholder="Example: Lower Parel, Mumbai"
                   disabled={saving}
                 />
+
               </div>
 
               {/* FACILITIES */}
 
               <div className="admin-form-group admin-form-full">
+
                 <label htmlFor="theatre-facilities">
                   Facilities
                 </label>
@@ -439,11 +475,13 @@ function AdminTheatres() {
                 <small className="admin-form-help">
                   Separate facilities with commas.
                 </small>
+
               </div>
 
               {/* STATUS */}
 
               <div className="admin-form-group">
+
                 <label htmlFor="theatre-status">
                   Status
                 </label>
@@ -455,6 +493,7 @@ function AdminTheatres() {
                   onChange={handleChange}
                   disabled={saving}
                 >
+
                   <option value="active">
                     Active
                   </option>
@@ -462,7 +501,9 @@ function AdminTheatres() {
                   <option value="inactive">
                     Inactive
                   </option>
+
                 </select>
+
               </div>
 
             </div>
@@ -497,22 +538,26 @@ function AdminTheatres() {
             </div>
 
           </form>
+
         </section>
 
-        {/* ==================================
-            THEATRE LIST
-        ================================== */}
+        {/* THEATRE LIST */}
 
         <section className="admin-theatre-list-card">
 
           <div className="admin-section-heading">
+
             <div>
-              <h2>All Theatres</h2>
+
+              <h2>
+                All Theatres
+              </h2>
 
               <p>
                 View and manage all CineBook
                 theatre locations.
               </p>
+
             </div>
 
             <button
@@ -521,56 +566,84 @@ function AdminTheatres() {
               onClick={fetchTheatres}
               disabled={loading || deletingId !== ""}
             >
-              {loading ? "Loading..." : "Refresh"}
+              {loading
+                ? "Loading..."
+                : "Refresh"}
             </button>
+
           </div>
 
           {/* LOADING */}
 
           {loading ? (
+
             <div className="admin-loading">
               Loading theatres...
             </div>
+
           ) : theatres.length === 0 ? (
 
-            /* EMPTY */
-
             <div className="admin-empty-state">
-              <h3>No theatres found</h3>
+
+              <h3>
+                No theatres found
+              </h3>
 
               <p>
                 Add your first theatre using
                 the form above.
               </p>
+
             </div>
 
           ) : (
-
-            /* TABLE */
 
             <div className="admin-theatre-table-wrapper">
 
               <table className="admin-theatre-table">
 
                 <thead>
+
                   <tr>
-                    <th>Theatre</th>
-                    <th>City</th>
-                    <th>Address</th>
-                    <th>Facilities</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>
+                      Theatre
+                    </th>
+
+                    <th>
+                      City
+                    </th>
+
+                    <th>
+                      Address
+                    </th>
+
+                    <th>
+                      Facilities
+                    </th>
+
+                    <th>
+                      Status
+                    </th>
+
+                    <th>
+                      Actions
+                    </th>
                   </tr>
+
                 </thead>
 
                 <tbody>
 
                   {theatres.map((theatre) => (
-                    <tr key={theatre._id}>
+
+                    <tr
+                      key={theatre.id}
+                    >
 
                       {/* THEATRE */}
 
                       <td>
+
                         <div className="admin-theatre-name">
 
                           <div className="admin-theatre-icon">
@@ -578,19 +651,22 @@ function AdminTheatres() {
                           </div>
 
                           <div>
+
                             <strong>
                               {theatre.name}
                             </strong>
 
                             <small>
                               ID:{" "}
-                              {theatre._id
-                                ? theatre._id.slice(-6)
+                              {theatre.id
+                                ? theatre.id.slice(-6)
                                 : "N/A"}
                             </small>
+
                           </div>
 
                         </div>
+
                       </td>
 
                       {/* CITY */}
@@ -602,14 +678,17 @@ function AdminTheatres() {
                       {/* ADDRESS */}
 
                       <td>
+
                         <div className="admin-theatre-address">
                           {theatre.address || "—"}
                         </div>
+
                       </td>
 
                       {/* FACILITIES */}
 
                       <td>
+
                         <div className="admin-facilities">
 
                           {Array.isArray(
@@ -619,40 +698,53 @@ function AdminTheatres() {
 
                             theatre.facilities.map(
                               (facility, index) => (
+
                                 <span
-                                  key={`${theatre._id}-${index}`}
+                                  key={`${theatre.id}-${index}`}
                                 >
                                   {facility}
                                 </span>
+
                               )
                             )
 
                           ) : (
-                            <span>—</span>
+
+                            <span>
+                              —
+                            </span>
+
                           )}
 
                         </div>
+
                       </td>
 
                       {/* STATUS */}
 
                       <td>
+
                         <span
                           className={getStatusClass(
                             theatre.status
                           )}
                         >
+
                           <span className="theatre-status-dot"></span>
 
-                          {theatre.status === "active"
+                          {theatre.status ===
+                          "active"
                             ? "Active"
                             : "Inactive"}
+
                         </span>
+
                       </td>
 
                       {/* ACTIONS */}
 
                       <td>
+
                         <div className="admin-theatre-actions">
 
                           <button
@@ -673,35 +765,40 @@ function AdminTheatres() {
                             className="admin-delete-button"
                             onClick={() =>
                               handleDelete(
-                                theatre._id
+                                theatre.id
                               )
                             }
                             disabled={
                               deletingId ===
-                              theatre._id
+                              theatre.id
                             }
                           >
                             {deletingId ===
-                            theatre._id
+                            theatre.id
                               ? "Deleting..."
                               : "Delete"}
                           </button>
 
                         </div>
+
                       </td>
 
                     </tr>
+
                   ))}
 
                 </tbody>
 
               </table>
+
             </div>
+
           )}
 
         </section>
 
       </div>
+
     </div>
   );
 }

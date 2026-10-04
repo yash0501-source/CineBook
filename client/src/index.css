@@ -8885,3 +8885,1513 @@ main {
     min-height: 54px;
   }
 }
+/* =========================================================
+   CINEBOOK — PREMIUM DIGITAL TICKET
+   Add this at the VERY BOTTOM of your CSS file
+   ========================================================= */
+
+.ticket-page {
+  min-height: 100vh;
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  background:
+    radial-gradient(
+      circle at 20% 10%,
+      rgba(255, 183, 77, 0.12),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 80% 90%,
+      rgba(255, 92, 92, 0.10),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #05070b 0%,
+      #0b0f18 45%,
+      #111827 100%
+    );
+
+  color: #ffffff;
+}
+
+
+/* MAIN TICKET */
+
+.ticket-card {
+  position: relative;
+  width: min(720px, 100%);
+  padding: 42px;
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.075),
+      rgba(255, 255, 255, 0.025)
+    );
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px;
+
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    0 0 60px rgba(255, 174, 0, 0.06);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  animation: ticketAppear 0.55s ease-out;
+}
+
+
+/* GOLD GLOW */
+
+.ticket-card::before {
+  content: "";
+  position: absolute;
+
+  top: -120px;
+  right: -120px;
+
+  width: 280px;
+  height: 280px;
+
+  background: rgba(255, 183, 77, 0.12);
+
+  border-radius: 50%;
+  filter: blur(70px);
+
+  pointer-events: none;
+}
+
+.ticket-card::after {
+  content: "";
+
+  position: absolute;
+
+  bottom: -150px;
+  left: -150px;
+
+  width: 300px;
+  height: 300px;
+
+  background: rgba(255, 92, 92, 0.08);
+
+  border-radius: 50%;
+  filter: blur(80px);
+
+  pointer-events: none;
+}
+
+
+/* HEADER */
+
+.ticket-header {
+  position: relative;
+  text-align: center;
+  z-index: 1;
+}
+
+.ticket-header .section-label {
+  margin-bottom: 10px;
+
+  color: #ffbd5a;
+
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 4px;
+}
+
+.ticket-header h1 {
+  margin: 0;
+
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 800;
+  letter-spacing: -1px;
+
+  background: linear-gradient(
+    90deg,
+    #ffffff,
+    #ffd27a,
+    #ffffff
+  );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.ticket-header p:not(.section-label) {
+  margin-top: 12px;
+
+  color: #aeb7c7;
+  font-size: 15px;
+}
+
+
+/* DIVIDER */
+
+.ticket-divider {
+  height: 1px;
+  margin: 30px 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 190, 90, 0.55),
+      transparent
+    );
+}
+
+
+/* MOVIE SECTION */
+
+.ticket-movie-section {
+  position: relative;
+  padding: 26px;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 190, 90, 0.10),
+      rgba(255, 255, 255, 0.035)
+    );
+
+  border: 1px solid rgba(255, 190, 90, 0.14);
+
+  text-align: center;
+}
+
+.ticket-movie-section .section-label {
+  margin: 0 0 10px;
+
+  color: #ffbd5a;
+
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.ticket-movie-section h2 {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: clamp(22px, 4vw, 32px);
+  font-weight: 800;
+}
+
+
+/* INFORMATION GRID */
+
+.ticket-info {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 14px;
+
+  margin-top: 25px;
+}
+
+.ticket-info > div {
+  padding: 18px;
+
+  border-radius: 15px;
+
+  background: rgba(255, 255, 255, 0.035);
+
+  border: 1px solid rgba(255, 255, 255, 0.07);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.ticket-info > div:hover {
+  transform: translateY(-2px);
+
+  background: rgba(255, 255, 255, 0.06);
+
+  border-color: rgba(255, 190, 90, 0.22);
+}
+
+.ticket-info span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #8792a6;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  letter-spacing: 1.4px;
+
+  text-transform: uppercase;
+}
+
+.ticket-info strong {
+  display: block;
+
+  color: #ffffff;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  word-break: break-word;
+}
+
+
+/* QR SECTION */
+
+.ticket-code {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+
+  padding: 30px 20px 10px;
+}
+
+.qr-code-wrapper {
+  padding: 14px;
+
+  background: #ffffff;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 15px 45px rgba(0, 0, 0, 0.45),
+    0 0 35px rgba(255, 190, 90, 0.10);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.qr-code-wrapper:hover {
+  transform: translateY(-4px) scale(1.02);
+
+  box-shadow:
+    0 20px 55px rgba(0, 0, 0, 0.55),
+    0 0 45px rgba(255, 190, 90, 0.16);
+}
+
+.ticket-code > strong {
+  margin-top: 18px;
+
+  color: #ffd27a;
+
+  font-size: 17px;
+
+  letter-spacing: 1px;
+}
+
+.ticket-code > p {
+  margin-top: 7px;
+
+  color: #7f8a9d;
+
+  font-size: 13px;
+}
+
+
+/* BUTTONS */
+
+.ticket-actions {
+  display: flex;
+
+  justify-content: center;
+
+  gap: 12px;
+
+  margin-top: 30px;
+
+  flex-wrap: wrap;
+}
+
+.print-ticket-button,
+.ticket-home-button {
+  min-width: 180px;
+
+  padding: 13px 22px;
+
+  border-radius: 12px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+/* PRINT BUTTON */
+
+.print-ticket-button {
+  border: 1px solid rgba(255, 190, 90, 0.45);
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffbd5a,
+      #e99a32
+    );
+
+  color: #17100a;
+
+  box-shadow:
+    0 10px 25px rgba(255, 166, 58, 0.18);
+}
+
+.print-ticket-button:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 14px 32px rgba(255, 166, 58, 0.28);
+}
+
+
+/* MY BOOKINGS BUTTON */
+
+.ticket-home-button {
+  display: inline-flex;
+
+  justify-content: center;
+  align-items: center;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  background: rgba(255, 255, 255, 0.055);
+
+  color: #ffffff;
+}
+
+.ticket-home-button:hover {
+  transform: translateY(-2px);
+
+  background: rgba(255, 255, 255, 0.10);
+
+  border-color: rgba(255, 190, 90, 0.28);
+}
+
+
+/* LOADING / ERROR CARD */
+
+.ticket-card .ticket-header h1 {
+  line-height: 1.15;
+}
+
+
+/* ANIMATION */
+
+@keyframes ticketAppear {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+  .ticket-page {
+    padding: 25px 12px;
+  }
+
+  .ticket-card {
+    padding: 25px 17px;
+
+    border-radius: 22px;
+  }
+
+  .ticket-header h1 {
+    font-size: 28px;
+  }
+
+  .ticket-header p:not(.section-label) {
+    font-size: 13px;
+  }
+
+  .ticket-info {
+    grid-template-columns: 1fr;
+
+    gap: 10px;
+  }
+
+  .ticket-info > div {
+    padding: 15px;
+  }
+
+  .ticket-movie-section {
+    padding: 22px 15px;
+  }
+
+  .ticket-movie-section h2 {
+    font-size: 23px;
+  }
+
+  .qr-code-wrapper {
+    padding: 10px;
+  }
+
+  .ticket-actions {
+    flex-direction: column;
+  }
+
+  .print-ticket-button,
+  .ticket-home-button {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+
+/* PRINT VERSION */
+
+@media print {
+
+  .ticket-page {
+    min-height: auto;
+
+    padding: 0;
+
+    background: #ffffff;
+
+    color: #000000;
+  }
+
+  .ticket-card {
+    width: 100%;
+
+    max-width: 700px;
+
+    margin: 0 auto;
+
+    padding: 30px;
+
+    background: #ffffff;
+
+    border: 2px solid #222222;
+
+    box-shadow: none;
+
+    color: #000000;
+
+    backdrop-filter: none;
+  }
+
+  .ticket-card::before,
+  .ticket-card::after {
+    display: none;
+  }
+
+  .ticket-header h1 {
+    color: #111111;
+
+    background: none;
+
+    -webkit-text-fill-color: initial;
+  }
+
+  .ticket-header p,
+  .ticket-info span,
+  .ticket-code > p {
+    color: #555555;
+  }
+
+  .ticket-movie-section,
+  .ticket-info > div {
+    background: #ffffff;
+
+    border-color: #dddddd;
+  }
+
+  .ticket-movie-section h2,
+  .ticket-info strong,
+  .ticket-code > strong {
+    color: #111111;
+  }
+
+  .ticket-actions {
+    display: none;
+  }
+
+  .ticket-divider {
+    background: #cccccc;
+  }
+}
+/* =========================================================
+   CINEBOOK PREMIUM LOGIN + SIGNUP
+   Paste at the VERY BOTTOM of your CSS file
+   ========================================================= */
+
+.auth-page {
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 40px 20px;
+
+  position: relative;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 15% 15%,
+      rgba(255, 193, 7, 0.12),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 85% 85%,
+      rgba(124, 58, 237, 0.12),
+      transparent 32%
+    ),
+    linear-gradient(
+      135deg,
+      #030305 0%,
+      #08080c 45%,
+      #111118 100%
+    );
+}
+
+/* Cinematic glow */
+.auth-page::before {
+  content: "";
+
+  position: absolute;
+
+  width: 550px;
+  height: 550px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 193, 7, 0.07);
+
+  filter: blur(110px);
+
+  top: -280px;
+  left: -220px;
+
+  pointer-events: none;
+}
+
+/* Purple cinematic glow */
+.auth-page::after {
+  content: "";
+
+  position: absolute;
+
+  width: 500px;
+  height: 500px;
+
+  border-radius: 50%;
+
+  background: rgba(124, 58, 237, 0.08);
+
+  filter: blur(110px);
+
+  right: -220px;
+  bottom: -240px;
+
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   PREMIUM CARD
+   ========================================================= */
+
+.auth-card {
+  width: 100%;
+  max-width: 450px;
+
+  box-sizing: border-box;
+
+  position: relative;
+  z-index: 2;
+
+  padding: 46px 42px;
+
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.09),
+      rgba(255, 255, 255, 0.025)
+    );
+
+  border: 1px solid rgba(255, 255, 255, 0.11);
+
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.70),
+    0 0 80px rgba(255, 193, 7, 0.035),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+
+  animation: cinebookAuthEnter 0.7s ease forwards;
+}
+
+/* Gold line on top of card */
+.auth-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 12%;
+
+  width: 76%;
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 193, 7, 0.9),
+    transparent
+  );
+}
+
+
+/* =========================================================
+   LOGIN HEADER
+   ========================================================= */
+
+.auth-header {
+  text-align: center;
+
+  margin-bottom: 32px;
+}
+
+.auth-header h1,
+.auth-card h1 {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: 38px;
+
+  line-height: 1.15;
+
+  font-weight: 750;
+
+  letter-spacing: -1px;
+
+  text-shadow:
+    0 5px 25px rgba(0, 0, 0, 0.4);
+}
+
+.auth-header p,
+.auth-subtitle {
+  margin: 12px 0 0;
+
+  color: rgba(255, 255, 255, 0.58);
+
+  font-size: 14px;
+
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   SIGNUP LABEL
+   ========================================================= */
+
+.section-label {
+  margin: 0 0 12px;
+
+  text-align: center;
+
+  color: #ffc107;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  letter-spacing: 3px;
+
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.auth-card form {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.form-group label {
+  color: rgba(255, 255, 255, 0.78);
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   PREMIUM INPUTS
+   ========================================================= */
+
+.form-group input {
+  width: 100%;
+
+  height: 52px;
+
+  box-sizing: border-box;
+
+  padding: 0 16px;
+
+  border-radius: 12px;
+
+  outline: none;
+
+  border: 1px solid rgba(255, 255, 255, 0.10);
+
+  background: rgba(0, 0, 0, 0.30);
+
+  color: #ffffff;
+
+  font-size: 14px;
+
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.30);
+}
+
+.form-group input:hover {
+  border-color: rgba(255, 255, 255, 0.20);
+}
+
+.form-group input:focus {
+  border-color: rgba(255, 193, 7, 0.75);
+
+  background: rgba(255, 255, 255, 0.045);
+
+  box-shadow:
+    0 0 0 3px rgba(255, 193, 7, 0.08),
+    0 8px 25px rgba(0, 0, 0, 0.25);
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   PREMIUM BUTTON
+   ========================================================= */
+
+.auth-button {
+  width: 100%;
+
+  height: 54px;
+
+  margin-top: 6px;
+
+  border: none;
+
+  border-radius: 13px;
+
+  cursor: pointer;
+
+  color: #080808;
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.3px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffe082 0%,
+      #ffc107 45%,
+      #ffb300 100%
+    );
+
+  box-shadow:
+    0 12px 30px rgba(255, 193, 7, 0.20);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+}
+
+.auth-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  filter: brightness(1.07);
+
+  box-shadow:
+    0 16px 40px rgba(255, 193, 7, 0.32);
+}
+
+.auth-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.auth-button:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.auth-error {
+  margin-bottom: 20px;
+
+  padding: 13px 15px;
+
+  border-radius: 11px;
+
+  border: 1px solid rgba(239, 68, 68, 0.25);
+
+  background: rgba(239, 68, 68, 0.08);
+
+  color: #ff9b9b;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   SUCCESS MESSAGE
+   ========================================================= */
+
+.auth-message {
+  margin: 18px 0 0;
+
+  padding: 12px 14px;
+
+  border-radius: 10px;
+
+  text-align: center;
+
+  color: #a7f3d0;
+
+  background: rgba(16, 185, 129, 0.08);
+
+  border: 1px solid rgba(16, 185, 129, 0.20);
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.auth-footer {
+  margin-top: 26px;
+
+  text-align: center;
+
+  color: rgba(255, 255, 255, 0.48);
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+.auth-footer p {
+  margin: 0;
+}
+
+.auth-footer a {
+  color: #ffc107;
+
+  font-weight: 700;
+
+  text-decoration: none;
+
+  transition:
+    color 0.2s ease,
+    text-shadow 0.2s ease;
+}
+
+.auth-footer a:hover {
+  color: #ffe082;
+
+  text-shadow:
+    0 0 15px rgba(255, 193, 7, 0.40);
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .auth-page {
+    padding: 25px 16px;
+  }
+
+  .auth-card {
+    padding: 34px 24px;
+
+    border-radius: 20px;
+  }
+
+  .auth-header h1,
+  .auth-card h1 {
+    font-size: 31px;
+  }
+
+  .form-group input {
+    height: 50px;
+  }
+
+  .auth-button {
+    height: 52px;
+  }
+}
+
+
+/* =========================================================
+   ENTRY ANIMATION
+   ========================================================= */
+
+@keyframes cinebookAuthEnter {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(25px)
+      scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+/* =========================================
+   CINEBOOK - PREMIUM MY BOOKINGS DESIGN
+   ========================================= */
+
+.my-bookings-page {
+    min-height: 100vh;
+    padding: 65px 7%;
+    background:
+        radial-gradient(ellipse at 15% 0%, rgba(212, 175, 55, 0.10), transparent 38%),
+        radial-gradient(ellipse at 90% 30%, rgba(90, 55, 140, 0.12), transparent 40%),
+        linear-gradient(135deg, #080a12 0%, #101321 55%, #080a12 100%);
+    color: #f5f5f5;
+    font-family: "Inter", "Segoe UI", sans-serif;
+    box-sizing: border-box;
+}
+
+.my-bookings-page h1 {
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    margin: 0 0 12px;
+    background: linear-gradient(100deg, #fff4ce, #d6ad55, #fff0c2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.my-bookings-page > p {
+    color: #a9afc0;
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 42px;
+}
+
+/* BOOKING LIST */
+
+.bookings-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 25px;
+    align-items: stretch;
+}
+
+/* BOOKING CARD */
+
+.booking-card {
+    position: relative;
+    overflow: hidden;
+    padding: 30px;
+    border-radius: 20px;
+    background: linear-gradient(
+        145deg,
+        rgba(30, 35, 54, 0.96),
+        rgba(16, 20, 34, 0.98)
+    );
+    border: 1px solid rgba(214, 173, 85, 0.25);
+    box-shadow:
+        0 15px 45px rgba(0, 0, 0, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    transition: transform 0.3s ease, border-color 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
+.booking-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #a77b27, #ffe5a0, #a77b27);
+}
+
+.booking-card::after {
+    content: "";
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    top: -95px;
+    right: -75px;
+    border-radius: 50%;
+    background: rgba(214, 173, 85, 0.07);
+    pointer-events: none;
+}
+
+.booking-card:hover {
+    transform: translateY(-7px);
+    border-color: rgba(255, 215, 130, 0.65);
+    box-shadow: 0 22px 55px rgba(0, 0, 0, 0.45);
+}
+
+.booking-card h2 {
+    position: relative;
+    z-index: 1;
+    color: #ffe5a0;
+    font-size: 23px;
+    font-weight: 750;
+    margin: 0 0 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+/* BOOKING DETAILS */
+
+.booking-card p {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    color: #c3c8d6;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 13px 0;
+}
+
+.booking-card p strong {
+    color: #929bb0;
+    font-weight: 600;
+}
+
+.booking-card p:last-of-type {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.booking-card p:last-of-type:not(:empty) {
+    color: #78dfa7;
+}
+
+/* DIGITAL TICKET BUTTON */
+
+.booking-card a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 20px;
+    padding: 14px 20px;
+    border-radius: 11px;
+    background: linear-gradient(110deg, #b88b37, #f3d58e);
+    color: #17120a;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    box-shadow: 0 7px 22px rgba(184, 139, 55, 0.2);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.booking-card a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(214, 173, 85, 0.35);
+}
+
+/* EMPTY BOOKINGS */
+
+.empty-bookings {
+    max-width: 560px;
+    margin: 55px auto;
+    padding: 55px 30px;
+    text-align: center;
+    border-radius: 22px;
+    background: rgba(27, 32, 49, 0.8);
+    border: 1px solid rgba(214, 173, 85, 0.22);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.empty-bookings h2 {
+    color: #ffe5a0;
+    font-size: 25px;
+    margin-bottom: 12px;
+}
+
+.empty-bookings p {
+    color: #a9afc0;
+    line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+.empty-bookings a {
+    display: inline-block;
+    padding: 13px 28px;
+    border-radius: 10px;
+    background: linear-gradient(110deg, #b88b37, #f3d58e);
+    color: #17120a;
+    text-decoration: none;
+    font-weight: 750;
+}
+
+/* ERROR MESSAGE */
+
+.my-bookings-page .error-message {
+    max-width: 600px;
+    padding: 22px;
+    border-radius: 14px;
+    background: rgba(180, 50, 50, 0.12);
+    border: 1px solid rgba(255, 100, 100, 0.3);
+    color: #ffb1b1;
+}
+
+.my-bookings-page .error-message button {
+    padding: 11px 22px;
+    border: none;
+    border-radius: 9px;
+    background: #e2bd70;
+    color: #17120a;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* LOADING TEXT */
+
+.my-bookings-page > p {
+    letter-spacing: 0.1px;
+}
+
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 768px) {
+    .my-bookings-page {
+        padding: 42px 5%;
+    }
+
+    .bookings-list {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .booking-card {
+        padding: 24px;
+    }
+
+    .booking-card h2 {
+        font-size: 21px;
+    }
+}
+
+@media (max-width: 420px) {
+    .my-bookings-page {
+        padding: 32px 16px;
+    }
+
+    .booking-card {
+        padding: 20px;
+    }
+
+    .booking-card p {
+        font-size: 13px;
+    }
+}
+
+/* =========================================
+   CINEBOOK - SPACIOUS PREMIUM PROFILE
+   ========================================= */
+
+.profile-page {
+    min-height: 100vh;
+    padding: 55px 5%;
+    box-sizing: border-box;
+    background:
+        radial-gradient(circle at 80% 10%, rgba(202, 165, 76, 0.09), transparent 35%),
+        linear-gradient(135deg, #0b0e16, #141a28);
+    color: #fff;
+}
+
+.profile-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* Main profile card */
+
+.profile-card {
+    display: grid;
+    grid-template-columns: 170px minmax(0, 1fr);
+    align-items: center;
+    gap: 35px;
+    padding: 42px;
+    border-radius: 26px;
+    border: 1px solid rgba(213, 176, 95, 0.28);
+    background: linear-gradient(
+        135deg,
+        #222938,
+        #171d2a 65%,
+        #111722
+    );
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.35);
+}
+
+/* Avatar */
+
+.profile-avatar {
+    width: 125px;
+    height: 125px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f3d38c, #b78938);
+    color: #111;
+    font-size: 43px;
+    font-weight: 800;
+    border: 5px solid rgba(255,255,255,0.15);
+    box-shadow: 0 10px 35px rgba(207, 163, 75, 0.2);
+    margin: 0 auto;
+}
+
+/* Profile information */
+
+.profile-info {
+    width: 100%;
+    min-width: 0;
+}
+
+.profile-info h2 {
+    font-size: 29px;
+    color: #fff;
+    margin: 0 0 22px;
+    font-weight: 750;
+}
+
+/* Details layout */
+
+.profile-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    width: 100%;
+}
+
+.profile-detail-card {
+    min-width: 0;
+    min-height: 105px;
+    padding: 22px;
+    box-sizing: border-box;
+    border-radius: 15px;
+    background: rgba(8, 10, 15, 0.76);
+    border: 1px solid rgba(255,255,255,0.07);
+    transition: 0.25s ease;
+}
+
+.profile-detail-card:hover {
+    border-color: rgba(218, 180, 94, 0.5);
+    transform: translateY(-3px);
+}
+
+.profile-detail-card label {
+    display: block;
+    margin-bottom: 12px;
+    color: #929bad;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+}
+
+.profile-detail-card p {
+    margin: 0;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 650;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* Buttons */
+
+.profile-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 25px;
+}
+
+.profile-edit-btn,
+.profile-action-btn {
+    min-width: 135px;
+    padding: 14px 23px;
+    border-radius: 11px;
+    border: 1px solid #d3ad4b;
+    background: linear-gradient(135deg, #e6c34f, #c99c29);
+    color: #111;
+    font-size: 14px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.profile-edit-btn:hover,
+.profile-action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(211, 173, 75, 0.22);
+}
+
+.profile-actions button:last-child {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(255,255,255,0.22);
+}
+
+.profile-actions button:last-child:hover {
+    border-color: #d3ad4b;
+    color: #e6c34f;
+}
+
+/* Responsive layout */
+
+@media (max-width: 800px) {
+    .profile-page {
+        padding: 35px 20px;
+    }
+
+    .profile-card {
+        grid-template-columns: 1fr;
+        padding: 30px 24px;
+        gap: 25px;
+    }
+
+    .profile-avatar {
+        width: 105px;
+        height: 105px;
+        font-size: 36px;
+    }
+
+    .profile-info h2 {
+        text-align: center;
+        font-size: 25px;
+    }
+
+    .profile-actions {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 520px) {
+    .profile-details-grid {
+        grid-template-columns: 1fr;
+        gap: 13px;
+    }
+
+    .profile-card {
+        padding: 23px 17px;
+    }
+
+    .profile-detail-card {
+        min-height: 90px;
+        padding: 18px;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .profile-actions button {
+        width: 100%;
+    }
+}

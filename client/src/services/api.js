@@ -1,69 +1,30 @@
+
 import axios from "axios";
 
-// ========================================
-// CREATE AXIOS INSTANCE
-// ========================================
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  "http://localhost:8080/api";
 
 const api = axios.create({
-  baseURL:
-    import.meta.env.VITE_API_URL ||
-    "http://localhost:5000/api",
-
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// ========================================
-// REQUEST INTERCEPTOR
-// ========================================
-
+// Attach the current login token to every API request.
 api.interceptors.request.use(
   (config) => {
-    const token =
-      localStorage.getItem(
-        "cinebookToken"
-      );
+    const token = localStorage.getItem("cinebookToken");
 
     if (token) {
-      config.headers.Authorization =
-        `Bearer ${token}`;
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     return config;
   },
-
   (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// ========================================
-// RESPONSE INTERCEPTOR
-// ========================================
-
-api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-
-  (error) => {
-    if (
-      error.response?.status === 401
-    ) {
-      console.error(
-        "Authentication required."
-      );
-    }
-
-    if (
-      error.response?.status === 403
-    ) {
-      console.error(
-        "Admin access required."
-      );
-    }
-
     return Promise.reject(error);
   }
 );

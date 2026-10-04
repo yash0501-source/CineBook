@@ -8,33 +8,22 @@ import api from "../services/api";
 import "./TheatreSelection.css";
 
 function TheatreSelection() {
-  // =====================================================
-  // MOVIE ID
-  // =====================================================
-
   const { movieId } = useParams();
-
   const navigate = useNavigate();
 
   const [movie, setMovie] = useState(null);
   const [shows, setShows] = useState([]);
-  const [selectedDate, setSelectedDate] =
-    useState("");
-
-  const [loading, setLoading] =
-    useState(true);
-
-  const [error, setError] =
-    useState("");
+  const [theatres, setTheatres] = useState([]);
+  const [selectedDate, setSelectedDate] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   // =====================================================
   // DATE HELPER
-  // Creates YYYY-MM-DD using LOCAL time
   // =====================================================
 
   const formatDate = (date) => {
-    const year =
-      date.getFullYear();
+    const year = date.getFullYear();
 
     const month = String(
       date.getMonth() + 1
@@ -49,7 +38,6 @@ function TheatreSelection() {
 
   // =====================================================
   // GENERATE TODAY + NEXT 5 DAYS
-  // Automatically changes every day
   // =====================================================
 
   const generateDates = () => {
@@ -57,12 +45,7 @@ function TheatreSelection() {
 
     const today = new Date();
 
-    today.setHours(
-      0,
-      0,
-      0,
-      0
-    );
+    today.setHours(0, 0, 0, 0);
 
     for (let i = 0; i < 6; i++) {
       const date = new Date(today);
@@ -79,15 +62,10 @@ function TheatreSelection() {
     return dates;
   };
 
-  // =====================================================
-  // AVAILABLE DATES
-  // TODAY + NEXT 5 DAYS
-  // =====================================================
-
   const dates = generateDates();
 
   // =====================================================
-  // LOAD MOVIE + SHOWS
+  // LOAD MOVIE + THEATRES + SHOWS
   // =====================================================
 
   useEffect(() => {
@@ -97,13 +75,10 @@ function TheatreSelection() {
         setError("");
 
         if (!movieId) {
-          setError(
-            "Movie ID is missing."
-          );
+          setError("Movie ID is missing.");
           return;
         }
 
-        // Save movie ID for booking flow
         localStorage.setItem(
           "cinebookMovieId",
           String(movieId)
@@ -124,13 +99,31 @@ function TheatreSelection() {
           movieResponse.data;
 
         if (!movieData) {
-          setError(
-            "Movie not found."
-          );
+          setError("Movie not found.");
           return;
         }
 
         setMovie(movieData);
+
+        // =================================================
+        // LOAD THEATRES
+        // =================================================
+
+        const theatresResponse =
+          await api.get("/theatres");
+
+        const theatreData =
+          theatresResponse.data?.theatres ||
+          theatresResponse.data?.data ||
+          theatresResponse.data ||
+          [];
+
+        const theatreList =
+          Array.isArray(theatreData)
+            ? theatreData
+            : [];
+
+        setTheatres(theatreList);
 
         // =================================================
         // LOAD SHOWS
@@ -146,29 +139,24 @@ function TheatreSelection() {
           [];
 
         // =================================================
-        // ONLY SHOWS FOR THIS MOVIE
+        // ONLY SHOWS FOR CURRENT MOVIE
         // =================================================
 
         const movieShows =
           Array.isArray(allShows)
-            ? allShows.filter(
-                (show) => {
-                  const showMovieId =
-                    typeof show.movie ===
-                    "object"
-                      ? show.movie?._id ||
-                        show.movie?.id
-                      : show.movie ||
-                        show.movieId;
+            ? allShows.filter((show) => {
+                const showMovieId =
+                  typeof show.movie === "object"
+                    ? show.movie?.id ||
+                      show.movie?._id
+                    : show.movie ||
+                      show.movieId;
 
-                  return (
-                    String(
-                      showMovieId
-                    ) ===
-                    String(movieId)
-                  );
-                }
-              )
+                return (
+                  String(showMovieId) ===
+                  String(movieId)
+                );
+              })
             : [];
 
         setShows(movieShows);
@@ -177,30 +165,21 @@ function TheatreSelection() {
         // DEFAULT DATE = TODAY
         // =================================================
 
-        const today =
-          new Date();
+        const today = new Date();
 
-        today.setHours(
-          0,
-          0,
-          0,
-          0
-        );
+        today.setHours(0, 0, 0, 0);
 
         setSelectedDate(
           formatDate(today)
         );
-
       } catch (err) {
         console.error(
           "THEATRE SELECTION ERROR:",
-          err.response?.data ||
-            err
+          err.response?.data || err
         );
 
         setError(
-          err.response?.data
-            ?.message ||
+          err.response?.data?.message ||
             "Unable to load theatres and shows."
         );
       } finally {
@@ -212,101 +191,94 @@ function TheatreSelection() {
   }, [movieId]);
 
   // =====================================================
-  // FILTER SHOWS BY SELECTED DATE
+  // FILTER SHOWS BY DATE
   // =====================================================
 
   const filteredShows =
-    shows.filter(
-      (show) => {
-        if (!selectedDate) {
-          return true;
-        }
-
-        return (
-          String(
-            show.date
-          ).substring(0, 10) ===
-          selectedDate
-        );
+    shows.filter((show) => {
+      if (!selectedDate) {
+        return true;
       }
-    );
+
+      return (
+        String(show.date).substring(0, 10) ===
+        selectedDate
+      );
+    });
 
   // =====================================================
   // GROUP SHOWS BY THEATRE
   // =====================================================
 
-  const theatres = [];
+  const groupedTheatres = [];
 
-  filteredShows.forEach(
-    (show) => {
-      const theatre =
-        typeof show.theatre ===
-        "object"
-          ? show.theatre
-          : {};
+  filteredShows.forEach((show) => {
+    const theatreId =
+      typeof show.theatre === "object"
+        ? show.theatre?.id ||
+          show.theatre?._id
+        : show.theatre;
 
-      const theatreId =
-        theatre?._id ||
-        theatre?.id ||
-        theatre?.name ||
-        "theatre";
+    const theatre =
+      theatres.find(
+        (item) =>
+          String(item.id || item._id) ===
+          String(theatreId)
+      );
 
-      let existing =
-        theatres.find(
-          (item) =>
-            String(
-              item.id
-            ) ===
-            String(
-              theatreId
-            )
-        );
+    let existing =
+      groupedTheatres.find(
+        (item) =>
+          String(item.id) ===
+          String(theatreId)
+      );
 
-      if (!existing) {
-        existing = {
-          id: theatreId,
+    if (!existing) {
+      existing = {
+        id:
+          theatreId ||
+          `theatre-${groupedTheatres.length}`,
 
-          name:
-            theatre?.name ||
-            "CineBook Theatre",
+        name:
+          theatre?.name ||
+          "CineBook Theatre",
 
-          location:
-            theatre?.location ||
-            theatre?.address ||
-            "Mumbai",
+        location:
+          theatre?.address ||
+          theatre?.location ||
+          theatre?.city ||
+          "Mumbai",
 
-          shows: [],
-        };
+        shows: [],
+      };
 
-        theatres.push(
-          existing
-        );
-      }
-
-      existing.shows.push(
-        show
+      groupedTheatres.push(
+        existing
       );
     }
-  );
+
+    existing.shows.push(show);
+  });
 
   // =====================================================
   // SELECT SHOW
   // =====================================================
 
-  const selectShow = (
-    show
-  ) => {
-    if (!show?._id) {
+  const selectShow = (show) => {
+    // IMPORTANT:
+    // Java Spring Boot returns "id"
+    // NOT "_id"
+
+    if (!show?.id) {
       setError(
         "Show information is missing."
       );
       return;
     }
 
-    // Save selected show
     localStorage.setItem(
       "cinebookShowId",
-      String(show._id)
+      String(show.id)
     );
 
     localStorage.setItem(
@@ -318,7 +290,7 @@ function TheatreSelection() {
       `/movies/${movieId}/seats`,
       {
         state: {
-          showId: show._id,
+          showId: show.id,
           movieId: movieId,
           show: show,
         },
@@ -333,26 +305,18 @@ function TheatreSelection() {
   if (loading) {
     return (
       <div className="theatre-selection-page">
-
         <div className="theatre-selection-container">
-
           <div className="theatre-loading">
-
             <div>
-
               <div className="loading-spinner"></div>
 
               <p>
                 Loading theatres
                 and showtimes...
               </p>
-
             </div>
-
           </div>
-
         </div>
-
       </div>
     );
   }
@@ -363,12 +327,9 @@ function TheatreSelection() {
 
   return (
     <div className="theatre-selection-page">
-
       <div className="theatre-selection-container">
 
-        {/* =================================================
-            HEADER
-        ================================================= */}
+        {/* HEADER */}
 
         <section className="theatre-page-header">
 
@@ -395,24 +356,16 @@ function TheatreSelection() {
 
         </section>
 
-        {/* =================================================
-            ERROR
-        ================================================= */}
+        {/* ERROR */}
 
         {error && (
           <div className="theatre-error">
-
             <span>!</span>
-
             {error}
-
           </div>
         )}
 
-        {/* =================================================
-            DATES
-            TODAY + NEXT 5 DAYS
-        ================================================= */}
+        {/* DATE SECTION */}
 
         <section className="date-section">
 
@@ -434,8 +387,7 @@ function TheatreSelection() {
                   parsedDate.toLocaleDateString(
                     "en-IN",
                     {
-                      weekday:
-                        "short",
+                      weekday: "short",
                     }
                   );
 
@@ -443,8 +395,7 @@ function TheatreSelection() {
                   parsedDate.toLocaleDateString(
                     "en-IN",
                     {
-                      day:
-                        "2-digit",
+                      day: "2-digit",
                     }
                   );
 
@@ -452,8 +403,7 @@ function TheatreSelection() {
                   parsedDate.toLocaleDateString(
                     "en-IN",
                     {
-                      month:
-                        "short",
+                      month: "short",
                     }
                   );
 
@@ -462,8 +412,7 @@ function TheatreSelection() {
                     key={date}
                     type="button"
                     className={
-                      selectedDate ===
-                      date
+                      selectedDate === date
                         ? "date-button active"
                         : "date-button"
                     }
@@ -474,7 +423,6 @@ function TheatreSelection() {
                     }
                   >
 
-                    {/* TODAY label */}
                     {index === 0 && (
                       <span className="date-today">
                         TODAY
@@ -502,16 +450,13 @@ function TheatreSelection() {
 
         </section>
 
-        {/* =================================================
-            SHOWTIME HEADER
-        ================================================= */}
+        {/* SHOWTIMES */}
 
         <section className="shows-section">
 
           <div className="section-heading">
 
             <div>
-
               <p className="section-label">
                 SHOWTIMES
               </p>
@@ -519,25 +464,21 @@ function TheatreSelection() {
               <h2>
                 Available Theatres
               </h2>
-
             </div>
 
             <span className="show-count">
               {filteredShows.length}{" "}
-              {filteredShows.length ===
-              1
+              {filteredShows.length === 1
                 ? "show"
                 : "shows"}
             </span>
 
           </div>
 
-          {/* =================================================
-              NO SHOWS
-          ================================================= */}
+          {/* NO SHOWS */}
 
-          {filteredShows.length ===
-          0 ? (
+          {filteredShows.length === 0 ? (
+
             <div className="no-shows">
 
               <div className="empty-icon">
@@ -555,15 +496,12 @@ function TheatreSelection() {
               </p>
 
             </div>
+
           ) : (
 
             <div className="theatre-list">
 
-              {/* =================================================
-                  THEATRE CARDS
-              ================================================= */}
-
-              {theatres.map(
+              {groupedTheatres.map(
                 (theatre) => (
 
                   <article
@@ -571,9 +509,7 @@ function TheatreSelection() {
                     key={theatre.id}
                   >
 
-                    {/* =================================================
-                        THEATRE HEADER
-                    ================================================= */}
+                    {/* THEATRE HEADER */}
 
                     <div className="theatre-header">
 
@@ -599,18 +535,18 @@ function TheatreSelection() {
                       </div>
 
                       <div className="theatre-show-count">
+
                         {theatre.shows.length}{" "}
-                        {theatre.shows.length ===
-                        1
+
+                        {theatre.shows.length === 1
                           ? "show"
                           : "shows"}
+
                       </div>
 
                     </div>
 
-                    {/* =================================================
-                        SHOWTIMES
-                    ================================================= */}
+                    {/* SHOWTIME SECTION */}
 
                     <div className="showtime-section">
 
@@ -621,111 +557,109 @@ function TheatreSelection() {
                       <div className="showtime-grid">
 
                         {[...theatre.shows]
-                          .sort(
-                            (a, b) =>
+                          .sort((a, b) =>
+                            String(
+                              a.time ||
+                              a.startTime ||
+                              ""
+                            ).localeCompare(
                               String(
-                                a.time ||
-                                  a.startTime ||
-                                  ""
-                              ).localeCompare(
-                                String(
-                                  b.time ||
-                                    b.startTime ||
-                                    ""
-                                )
+                                b.time ||
+                                b.startTime ||
+                                ""
                               )
+                            )
                           )
-                          .map(
-                            (show) => {
+                          .map((show) => {
 
-                              const screen =
-                                typeof show.screen ===
-                                "object"
-                                  ? show.screen
-                                  : {};
+                            const screen =
+                              typeof show.screen ===
+                              "object"
+                                ? show.screen
+                                : {};
 
-                              const standardPrice =
-                                show.seatPrices
-                                  ?.standard ??
-                                show.standardPrice ??
-                                230;
+                            const standardPrice =
+                              show.seatPrices
+                                ?.standard ??
+                              show.standardPrice ??
+                              230;
 
-                              const premiumPrice =
-                                show.seatPrices
-                                  ?.premium ??
-                                show.premiumPrice ??
-                                300;
+                            const premiumPrice =
+                              show.seatPrices
+                                ?.premium ??
+                              show.premiumPrice ??
+                              300;
 
-                              const reclinerPrice =
-                                show.seatPrices
-                                  ?.recliner ??
-                                show.reclinerPrice ??
-                                380;
+                            const reclinerPrice =
+                              show.seatPrices
+                                ?.recliner ??
+                              show.reclinerPrice ??
+                              380;
 
-                              return (
-                                <button
-                                  key={
-                                    show._id
-                                  }
-                                  type="button"
-                                  className="showtime-button"
-                                  onClick={() =>
-                                    selectShow(
-                                      show
+                            return (
+
+                              <button
+                                key={show.id}
+                                type="button"
+                                className="showtime-button"
+                                onClick={() =>
+                                  selectShow(
+                                    show
+                                  )
+                                }
+                              >
+
+                                <span className="showtime-time">
+                                  {show.time ||
+                                    show.startTime ||
+                                    "Time"}
+                                </span>
+
+                                <span className="showtime-screen">
+                                  {screen.name ||
+                                    "Screen"}
+                                </span>
+
+                                <span className="showtime-price">
+                                  From ₹
+                                  {Math.min(
+                                    Number(
+                                      standardPrice
+                                    ),
+                                    Number(
+                                      premiumPrice
+                                    ),
+                                    Number(
+                                      reclinerPrice
                                     )
-                                  }
-                                >
+                                  )}
+                                </span>
 
-                                  <span className="showtime-time">
-                                    {show.time ||
-                                      show.startTime ||
-                                      "Time"}
-                                  </span>
+                                <span className="show-availability available">
+                                  AVAILABLE
+                                </span>
 
-                                  <span className="showtime-screen">
-                                    {screen.name ||
-                                      "Screen"}
-                                  </span>
+                              </button>
 
-                                  <span className="showtime-price">
-                                    From ₹
-                                    {Math.min(
-                                      Number(
-                                        standardPrice
-                                      ),
-                                      Number(
-                                        premiumPrice
-                                      ),
-                                      Number(
-                                        reclinerPrice
-                                      )
-                                    )}
-                                  </span>
-
-                                  <span className="show-availability available">
-                                    AVAILABLE
-                                  </span>
-
-                                </button>
-                              );
-                            }
-                          )}
+                            );
+                          })}
 
                       </div>
 
                     </div>
 
                   </article>
+
                 )
               )}
 
             </div>
+
           )}
 
         </section>
 
       </div>
-
     </div>
   );
 }

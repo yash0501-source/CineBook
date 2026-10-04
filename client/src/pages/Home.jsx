@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
@@ -8,19 +9,29 @@ function Home() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ========================================
+  // FETCH MOVIES FROM BACKEND
+  // ========================================
+
   useEffect(() => {
     const fetchMovies = async () => {
       try {
         const response = await api.get("/movies");
 
-        const movieData =
-          response.data?.movies ||
-          response.data?.data ||
-          [];
+        // Support different API response formats
+        const movieData = Array.isArray(response.data)
+          ? response.data
+          : Array.isArray(response.data?.movies)
+          ? response.data.movies
+          : Array.isArray(response.data?.data)
+          ? response.data.data
+          : [];
 
         setMovies(movieData);
+
+        console.log("CINEBOOK MOVIES LOADED:", movieData);
       } catch (error) {
-        console.error("Failed to load movies:", error);
+        console.error("FAILED TO LOAD MOVIES:", error);
         setMovies([]);
       } finally {
         setLoading(false);
@@ -30,42 +41,52 @@ function Home() {
     fetchMovies();
   }, []);
 
+  // ========================================
+  // FILTER MOVIES
+  // ========================================
+
+  const getMovieStatus = (movie) =>
+    String(movie.status || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[\s-]+/g, "_");
+
+  // Show maximum 4 currently showing movies
   const nowShowingMovies = movies
-    .filter((movie) => movie.status === "now_showing")
+    .filter((movie) =>
+      ["now_showing", "currently_showing", "in_cinemas"].includes(
+        getMovieStatus(movie)
+      )
+    )
     .slice(0, 4);
 
+  // Show maximum 2 upcoming movies
   const upcomingMovies = movies
-    .filter((movie) => movie.status === "upcoming")
-    .slice(0, 4);
+    .filter((movie) =>
+      ["upcoming", "coming_soon"].includes(getMovieStatus(movie))
+    )
+    .slice(0, 2);
 
   // ========================================
-  // PRODUCTION-SAFE POSTER URL
+  // POSTER URL
   // ========================================
 
   const getPosterUrl = (poster) => {
-    if (!poster) {
-      return "";
-    }
+    if (!poster) return "";
 
-    // Already a complete URL
-    if (
-      poster.startsWith("http://") ||
-      poster.startsWith("https://")
-    ) {
+    // Already a complete image URL
+    if (/^https?:\/\//i.test(poster)) {
       return poster;
     }
 
-    // Get backend URL from Vercel environment variable
+    // Get backend URL from api.js
     const apiBaseUrl =
-      import.meta.env.VITE_API_URL ||
-      "http://localhost:5000/api";
+      api.defaults.baseURL || "http://localhost:8080/api";
 
-    // Remove /api from the backend URL
+    // Remove /api to get backend root
     const backendUrl = apiBaseUrl.replace(/\/api\/?$/, "");
 
-    return `${backendUrl}${
-      poster.startsWith("/") ? poster : `/${poster}`
-    }`;
+    return `${backendUrl}${poster.startsWith("/") ? poster : `/${poster}`}`;
   };
 
   // ========================================
@@ -73,26 +94,36 @@ function Home() {
   // ========================================
 
   const MovieCard = ({ movie }) => {
+    const movieId = movie.id || movie._id;
+
     return (
       <div
         className="movie-card"
-        onClick={() =>
-          navigate(`/movies/${movie._id}`)
-        }
+        onClick={() => {
+          if (movieId) {
+            navigate(`/movies/${movieId}`);
+          }
+        }}
+        style={{ cursor: "pointer" }}
       >
         <div className="movie-poster">
           {movie.poster ? (
             <img
               src={getPosterUrl(movie.poster)}
-              alt={movie.title}
+              alt={movie.title || "Movie poster"}
               loading="lazy"
               onError={(event) => {
                 event.currentTarget.style.display = "none";
+
+                console.error(
+                  "POSTER FAILED TO LOAD:",
+                  getPosterUrl(movie.poster)
+                );
               }}
             />
           ) : (
             <div className="movie-poster-fallback">
-              {movie.title}
+              {movie.title || "Movie"}
             </div>
           )}
         </div>
@@ -112,16 +143,31 @@ function Home() {
     );
   };
 
+  // ========================================
+  // LOADING PLACEHOLDERS
+  // ========================================
+
+  const LoadingGrid = ({ count }) => (
+    <div className="movie-placeholder-grid">
+      {Array.from({ length: count }, (_, index) => (
+        <div className="movie-placeholder" key={index}>
+          Loading...
+        </div>
+      ))}
+    </div>
+  );
+
+  // ========================================
+  // HOME PAGE
+  // ========================================
+
   return (
     <div className="home-page">
 
-      {/* ========================================
-          HERO SECTION
-      ======================================== */}
+      {/* HERO SECTION */}
 
       <section className="hero">
         <div className="hero-content">
-
           <p className="hero-label">
             WELCOME TO CINEBOOK
           </p>
@@ -139,7 +185,6 @@ function Home() {
           </p>
 
           <div className="hero-buttons">
-
             <button
               className="primary-button"
               onClick={() => navigate("/movies")}
@@ -153,28 +198,20 @@ function Home() {
             >
               View Bookings
             </button>
-
           </div>
-
         </div>
       </section>
 
-      {/* ========================================
-          CURRENTLY SHOWING
-      ======================================== */}
+      {/* CURRENTLY SHOWING */}
 
       <section className="movie-section">
-
         <div className="section-heading">
-
           <div>
             <p className="section-label">
               NOW SHOWING
             </p>
 
-            <h2>
-              Currently in Cinemas
-            </h2>
+            <h2>Currently in Cinemas</h2>
           </div>
 
           <button
@@ -183,117 +220,62 @@ function Home() {
           >
             View All →
           </button>
-
         </div>
 
         {loading ? (
-          <div className="movie-placeholder-grid">
-
-            <div className="movie-placeholder">
-              Loading...
-            </div>
-
-            <div className="movie-placeholder">
-              Loading...
-            </div>
-
-            <div className="movie-placeholder">
-              Loading...
-            </div>
-
-            <div className="movie-placeholder">
-              Loading...
-            </div>
-
-          </div>
+          <LoadingGrid count={4} />
         ) : nowShowingMovies.length > 0 ? (
           <div className="movie-placeholder-grid">
-
-            {nowShowingMovies.map((movie) => (
+            {nowShowingMovies.map((movie, index) => (
               <MovieCard
-                key={movie._id}
+                key={movie.id || movie._id || index}
                 movie={movie}
               />
             ))}
-
           </div>
         ) : (
           <div className="movie-placeholder-grid">
-
             <div className="movie-placeholder">
               No movies available
             </div>
-
           </div>
         )}
-
       </section>
 
-      {/* ========================================
-          UPCOMING MOVIES
-      ======================================== */}
+      {/* UPCOMING MOVIES */}
 
       <section className="movie-section">
-
         <div className="section-heading">
-
           <div>
             <p className="section-label">
               COMING SOON
             </p>
 
-            <h2>
-              Upcoming Movies
-            </h2>
+            <h2>Upcoming Movies</h2>
           </div>
-
         </div>
 
         {loading ? (
-          <div className="movie-placeholder-grid">
-
-            <div className="movie-placeholder">
-              Loading...
-            </div>
-
-            <div className="movie-placeholder">
-              Loading...
-            </div>
-
-            <div className="movie-placeholder">
-              Loading...
-            </div>
-
-            <div className="movie-placeholder">
-              Loading...
-            </div>
-
-          </div>
+          <LoadingGrid count={2} />
         ) : upcomingMovies.length > 0 ? (
           <div className="movie-placeholder-grid">
-
-            {upcomingMovies.map((movie) => (
+            {upcomingMovies.map((movie, index) => (
               <MovieCard
-                key={movie._id}
+                key={movie.id || movie._id || index}
                 movie={movie}
               />
             ))}
-
           </div>
         ) : (
           <div className="movie-placeholder-grid">
-
             <div className="movie-placeholder">
               No upcoming movies
             </div>
-
           </div>
         )}
-
       </section>
 
     </div>
   );
 }
-
 export default Home;

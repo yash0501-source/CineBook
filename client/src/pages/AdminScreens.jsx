@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/api";
@@ -17,39 +18,73 @@ function AdminScreens() {
   const [form, setForm] = useState({
     name: "",
     theatre: "",
-    screenType: "Standard",
+    screenType: "standard",
     totalSeats: "",
     rows: "",
     seatsPerRow: "",
     status: "active",
   });
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError("");
+  // ========================================
+  // FETCH SCREENS AND THEATRES
+  // ========================================
 
-      const [screensResponse, theatresResponse] =
-        await Promise.all([
-          api.get("/admin/screens"),
-          api.get("/admin/theatres"),
+  const fetchData = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const [screensResult, theatresResult] =
+        await Promise.allSettled([
+          api.get("/screens"),
+          api.get("/theatres"),
         ]);
 
-      setScreens(
-        screensResponse.data.screens || []
-      );
+      // Screens are essential for this page.
+      if (screensResult.status === "rejected") {
+        throw screensResult.reason;
+      }
 
-      setTheatres(
-        theatresResponse.data.theatres || []
-      );
-    } catch (error) {
+      const screenData = screensResult.value.data;
+
+      const screenList = Array.isArray(screenData)
+        ? screenData
+        : screenData?.screens || [];
+
+      setScreens(screenList);
+
+      // Load theatres separately.
+      if (theatresResult.status === "fulfilled") {
+        const theatreData = theatresResult.value.data;
+
+        const theatreList = Array.isArray(theatreData)
+          ? theatreData
+          : theatreData?.theatres || [];
+
+        setTheatres(theatreList);
+      } else {
+        console.error(
+          "THEATRE LOAD ERROR:",
+          theatresResult.reason.response?.data ||
+            theatresResult.reason
+        );
+
+        setTheatres([]);
+        setError(
+          "Screens loaded, but theatres could not be loaded."
+        );
+      }
+    } catch (err) {
       console.error(
         "ADMIN SCREEN LOAD ERROR:",
-        error
+        err.response?.data || err
       );
 
+      setScreens([]);
+
       setError(
-        error.response?.data?.message ||
+        err.response?.data?.message ||
+          err.response?.data?.error ||
           "Failed to load screen management data."
       );
     } finally {
@@ -57,9 +92,17 @@ function AdminScreens() {
     }
   };
 
+  // ========================================
+  // INITIAL LOAD
+  // ========================================
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  // ========================================
+  // HANDLE INPUT
+  // ========================================
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,11 +113,15 @@ function AdminScreens() {
     }));
   };
 
+  // ========================================
+  // RESET FORM
+  // ========================================
+
   const resetForm = () => {
     setForm({
       name: "",
       theatre: "",
-      screenType: "Standard",
+      screenType: "standard",
       totalSeats: "",
       rows: "",
       seatsPerRow: "",
@@ -85,6 +132,36 @@ function AdminScreens() {
     setError("");
   };
 
+  // ========================================
+  // GENERATE ROW LABELS
+  // ========================================
+
+  const generateRows = (count) => {
+    return Array.from(
+      { length: count },
+      (_, index) => {
+        let label = "";
+        let number = index + 1;
+
+        while (number > 0) {
+          number--;
+
+          label =
+            String.fromCharCode(65 + (number % 26)) +
+            label;
+
+          number = Math.floor(number / 26);
+        }
+
+        return label;
+      }
+    );
+  };
+
+  // ========================================
+  // CREATE / UPDATE SCREEN
+  // ========================================
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -92,63 +169,75 @@ function AdminScreens() {
     setSuccess("");
 
     if (
-      !form.name ||
+      !form.name.trim() ||
       !form.theatre ||
-      !form.totalSeats ||
       !form.rows ||
       !form.seatsPerRow
     ) {
-      setError(
-        "Please fill all required screen details."
-      );
-
+      setError("Please fill all required screen details.");
       return;
     }
+
+    const rowCount = Number(form.rows);
+    const seatsPerRow = Number(form.seatsPerRow);
+
+    if (
+      !Number.isInteger(rowCount) ||
+      !Number.isInteger(seatsPerRow) ||
+      rowCount <= 0 ||
+      seatsPerRow <= 0
+    ) {
+      setError("Rows and seats per row must be positive whole numbers.");
+      return;
+    }
+
+    const calculatedSeats = rowCount * seatsPerRow;
+
+    if (calculatedSeats > 5000) {
+      setError("The seating capacity is too large.");
+      return;
+    }
+
+    const rowLabels = generateRows(rowCount);
+
+    const payload = {
+      name: form.name.trim(),
+      theatre: form.theatre,
+      screenType: form.screenType.toLowerCase(),
+      totalSeats: calculatedSeats,
+      rows: rowLabels,
+      seatsPerRow: seatsPerRow,
+      status: form.status,
+    };
 
     try {
       setSaving(true);
 
-      const payload = {
-        name: form.name,
-        theatre: form.theatre,
-        screenType: form.screenType,
-        totalSeats: Number(form.totalSeats),
-        rows: Number(form.rows),
-        seatsPerRow: Number(form.seatsPerRow),
-        status: form.status,
-      };
-
       if (editingId) {
         await api.put(
-          `/admin/screens/${editingId}`,
+          `/screens/${editingId}`,
           payload
         );
 
-        setSuccess(
-          "Screen updated successfully."
-        );
+        setSuccess("Screen updated successfully.");
       } else {
-        await api.post(
-          "/admin/screens",
-          payload
-        );
+        await api.post("/screens", payload);
 
-        setSuccess(
-          "Screen created successfully."
-        );
+        setSuccess("Screen created successfully.");
       }
 
       resetForm();
 
       await fetchData();
-    } catch (error) {
+    } catch (err) {
       console.error(
         "ADMIN SCREEN SAVE ERROR:",
-        error
+        err.response?.data || err
       );
 
       setError(
-        error.response?.data?.message ||
+        err.response?.data?.message ||
+          err.response?.data?.error ||
           "Failed to save screen."
       );
     } finally {
@@ -156,25 +245,30 @@ function AdminScreens() {
     }
   };
 
+  // ========================================
+  // EDIT SCREEN
+  // ========================================
+
   const handleEdit = (screen) => {
-    setEditingId(screen._id);
+    setEditingId(screen.id);
+
+    const theatreId =
+      typeof screen.theatre === "object"
+        ? screen.theatre?.id || ""
+        : screen.theatre || "";
 
     setForm({
       name: screen.name || "",
-      theatre:
-        screen.theatre?._id ||
-        screen.theatre ||
-        "",
-      screenType:
-        screen.screenType || "Standard",
-      totalSeats:
-        screen.totalSeats || "",
-      rows:
-        screen.rows || "",
-      seatsPerRow:
-        screen.seatsPerRow || "",
-      status:
-        screen.status || "active",
+      theatre: theatreId,
+      screenType: (
+        screen.screenType || "standard"
+      ).toLowerCase(),
+      totalSeats: screen.totalSeats || "",
+      rows: Array.isArray(screen.rows)
+        ? screen.rows.length
+        : screen.rows || "",
+      seatsPerRow: screen.seatsPerRow || "",
+      status: screen.status || "active",
     });
 
     setError("");
@@ -186,82 +280,93 @@ function AdminScreens() {
     });
   };
 
+  // ========================================
+  // DELETE SCREEN
+  // ========================================
+
   const handleDelete = async (id) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this screen?"
     );
 
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
     try {
       setError("");
       setSuccess("");
 
-      await api.delete(
-        `/admin/screens/${id}`
-      );
+      await api.delete(`/screens/${id}`);
 
-      setSuccess(
-        "Screen deleted successfully."
-      );
+      setSuccess("Screen deleted successfully.");
+
+      if (editingId === id) {
+        resetForm();
+      }
 
       await fetchData();
-    } catch (error) {
+    } catch (err) {
       console.error(
         "ADMIN SCREEN DELETE ERROR:",
-        error
+        err.response?.data || err
       );
 
       setError(
-        error.response?.data?.message ||
+        err.response?.data?.message ||
+          err.response?.data?.error ||
           "Failed to delete screen."
       );
     }
   };
 
-  const getTheatreName = (screen) => {
+  // ========================================
+  // GET THEATRE DETAILS
+  // ========================================
+
+  const getTheatre = (screen) => {
     if (
       screen.theatre &&
       typeof screen.theatre === "object"
     ) {
-      return screen.theatre.name;
+      return screen.theatre;
     }
 
-    const theatre = theatres.find(
+    return theatres.find(
       (item) =>
-        item._id === screen.theatre
+        String(item.id) === String(screen.theatre)
     );
+  };
 
-    return theatre?.name || "—";
+  const getTheatreName = (screen) => {
+    return getTheatre(screen)?.name || "—";
   };
 
   const getTheatreCity = (screen) => {
-    if (
-      screen.theatre &&
-      typeof screen.theatre === "object"
-    ) {
-      return screen.theatre.city;
+    return getTheatre(screen)?.city || "";
+  };
+
+  // ========================================
+  // FORMAT ROW COUNT
+  // ========================================
+
+  const getRowCount = (rows) => {
+    if (Array.isArray(rows)) {
+      return rows.length;
     }
 
-    const theatre = theatres.find(
-      (item) =>
-        item._id === screen.theatre
-    );
-
-    return theatre?.city || "";
+    return Number(rows) || 0;
   };
+
+  // ========================================
+  // RENDER
+  // ========================================
 
   return (
     <div className="screen-management-page">
-
       <div className="screen-management-container">
 
         {/* HEADER */}
 
         <div className="screen-management-header">
-
           <div>
             <Link
               to="/admin"
@@ -279,23 +384,18 @@ function AdminScreens() {
                 <h1>Screen Management</h1>
 
                 <p>
-                  Manage cinema screens,
-                  seating capacity and layouts.
+                  Manage cinema screens, seating capacity
+                  and layouts.
                 </p>
               </div>
             </div>
           </div>
 
           <div className="screen-total-card">
-            <span>
-              {screens.length}
-            </span>
+            <span>{screens.length}</span>
 
-            <small>
-              Total Screens
-            </small>
+            <small>Total Screens</small>
           </div>
-
         </div>
 
         {/* ALERTS */}
@@ -315,25 +415,19 @@ function AdminScreens() {
         {/* FORM */}
 
         <section className="screen-form-card">
-
           <div className="screen-card-header">
-
             <div>
               <span className="screen-card-label">
-                {editingId
-                  ? "EDIT SCREEN"
-                  : "CREATE SCREEN"}
+                {editingId ? "EDIT SCREEN" : "CREATE SCREEN"}
               </span>
 
               <h2>
-                {editingId
-                  ? "Update Screen"
-                  : "Add New Screen"}
+                {editingId ? "Update Screen" : "Add New Screen"}
               </h2>
 
               <p>
-                Configure the theatre screen
-                and its seating capacity.
+                Configure the theatre screen and its seating
+                capacity.
               </p>
             </div>
 
@@ -342,27 +436,24 @@ function AdminScreens() {
                 type="button"
                 className="screen-cancel-button"
                 onClick={resetForm}
+                disabled={saving}
               >
                 Cancel Edit
               </button>
             )}
-
           </div>
 
           <form
             className="screen-form"
             onSubmit={handleSubmit}
           >
-
             <div className="screen-form-grid">
 
               {/* SCREEN NAME */}
 
               <div className="screen-field screen-field-large">
-
                 <label>
-                  Screen Name
-                  <span>*</span>
+                  Screen Name <span>*</span>
                 </label>
 
                 <input
@@ -371,105 +462,86 @@ function AdminScreens() {
                   value={form.name}
                   onChange={handleChange}
                   placeholder="Example: Screen 1"
+                  disabled={saving}
+                  required
                 />
-
               </div>
 
               {/* THEATRE */}
 
               <div className="screen-field screen-field-large">
-
                 <label>
-                  Theatre
-                  <span>*</span>
+                  Theatre <span>*</span>
                 </label>
 
                 <select
                   name="theatre"
                   value={form.theatre}
                   onChange={handleChange}
+                  disabled={saving}
+                  required
                 >
                   <option value="">
                     Select Theatre
                   </option>
 
-                  {theatres.map(
-                    (theatre) => (
-                      <option
-                        key={theatre._id}
-                        value={theatre._id}
-                      >
-                        {theatre.name}
-                      </option>
-                    )
-                  )}
+                  {theatres.map((theatre) => (
+                    <option
+                      key={theatre.id}
+                      value={theatre.id}
+                    >
+                      {theatre.name}
+                    </option>
+                  ))}
                 </select>
-
               </div>
 
               {/* SCREEN TYPE */}
 
               <div className="screen-field">
-
-                <label>
-                  Screen Type
-                </label>
+                <label>Screen Type</label>
 
                 <select
                   name="screenType"
                   value={form.screenType}
                   onChange={handleChange}
+                  disabled={saving}
                 >
-                  <option value="Standard">
-                    Standard
-                  </option>
-
-                  <option value="IMAX">
-                    IMAX
-                  </option>
-
-                  <option value="4DX">
-                    4DX
-                  </option>
-
-                  <option value="Dolby Atmos">
-                    Dolby Atmos
-                  </option>
-
-                  <option value="Premium">
-                    Premium
-                  </option>
+                  <option value="standard">Standard</option>
+                  <option value="imax">IMAX</option>
+                  <option value="4dx">4DX</option>
+                  <option value="dolby atmos">Dolby Atmos</option>
+                  <option value="premium">Premium</option>
                 </select>
-
               </div>
 
               {/* TOTAL SEATS */}
 
               <div className="screen-field">
-
                 <label>
-                  Total Seats
-                  <span>*</span>
+                  Total Seats <span>*</span>
                 </label>
 
                 <input
                   type="number"
                   name="totalSeats"
-                  value={form.totalSeats}
-                  onChange={handleChange}
-                  min="1"
-                  placeholder="Example: 120"
+                  value={
+                    form.rows && form.seatsPerRow
+                      ? Number(form.rows) *
+                        Number(form.seatsPerRow)
+                      : ""
+                  }
+                  readOnly
+                  placeholder="Calculated automatically"
+                  disabled={saving}
                 />
-
               </div>
 
               {/* ROWS */}
 
               <div className="screen-field">
-
                 <label>
-                  Number of Rows
-                  <span>*</span>
+                  Number of Rows <span>*</span>
                 </label>
 
                 <input
@@ -478,18 +550,18 @@ function AdminScreens() {
                   value={form.rows}
                   onChange={handleChange}
                   min="1"
-                  placeholder="Example: 10"
+                  max="200"
+                  placeholder="Example: 7"
+                  disabled={saving}
+                  required
                 />
-
               </div>
 
               {/* SEATS PER ROW */}
 
               <div className="screen-field">
-
                 <label>
-                  Seats Per Row
-                  <span>*</span>
+                  Seats Per Row <span>*</span>
                 </label>
 
                 <input
@@ -498,72 +570,55 @@ function AdminScreens() {
                   value={form.seatsPerRow}
                   onChange={handleChange}
                   min="1"
-                  placeholder="Example: 12"
+                  max="200"
+                  placeholder="Example: 8"
+                  disabled={saving}
+                  required
                 />
-
               </div>
 
               {/* STATUS */}
 
               <div className="screen-field">
-
-                <label>
-                  Status
-                </label>
+                <label>Status</label>
 
                 <select
                   name="status"
                   value={form.status}
                   onChange={handleChange}
+                  disabled={saving}
                 >
-                  <option value="active">
-                    Active
-                  </option>
-
-                  <option value="inactive">
-                    Inactive
-                  </option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
                 </select>
-
               </div>
-
             </div>
 
             {/* FORM FOOTER */}
 
             <div className="screen-form-footer">
-
               <div className="screen-capacity-preview">
-
                 <div className="capacity-icon">
                   💺
                 </div>
 
                 <div>
-                  <span>
-                    Seating Capacity
-                  </span>
+                  <span>Seating Capacity</span>
 
                   <strong>
-                    {form.rows &&
-                    form.seatsPerRow
-                      ? Number(
-                          form.rows
-                        ) *
-                        Number(
-                          form.seatsPerRow
-                        )
+                    {form.rows && form.seatsPerRow
+                      ? Number(form.rows) *
+                        Number(form.seatsPerRow)
                       : 0}{" "}
                     seats
                   </strong>
                 </div>
-
               </div>
 
               <button
                 type="submit"
                 className="screen-submit-button"
-                disabled={saving}
+                disabled={saving || theatres.length === 0}
               >
                 {saving
                   ? "Saving..."
@@ -571,31 +626,23 @@ function AdminScreens() {
                   ? "Update Screen"
                   : "Create Screen"}
               </button>
-
             </div>
-
           </form>
-
         </section>
 
-        {/* SCREEN LIST */}
+        {/* SCREEN INVENTORY */}
 
         <section className="screen-list-card">
-
           <div className="screen-list-header">
-
             <div>
               <span className="screen-card-label">
                 SCREEN INVENTORY
               </span>
 
-              <h2>
-                All Cinema Screens
-              </h2>
+              <h2>All Cinema Screens</h2>
 
               <p>
-                View and manage all screens
-                across your theatres.
+                View and manage all screens across your theatres.
               </p>
             </div>
 
@@ -605,38 +652,36 @@ function AdminScreens() {
               onClick={fetchData}
               disabled={loading}
             >
-              ↻{" "}
-              {loading
-                ? "Loading..."
-                : "Refresh"}
+              ↻ {loading ? "Loading..." : "Refresh"}
             </button>
-
           </div>
+
+          {/* LOADING */}
 
           {loading ? (
             <div className="screen-loading">
               Loading screens...
             </div>
           ) : screens.length === 0 ? (
+            /* EMPTY */
+
             <div className="screen-empty">
               <div className="screen-empty-icon">
                 🎬
               </div>
 
-              <h3>
-                No Screens Found
-              </h3>
+              <h3>No Screens Found</h3>
 
               <p>
-                Create your first cinema
-                screen using the form above.
+                Create your first cinema screen using the
+                form above.
               </p>
             </div>
           ) : (
+            /* TABLE */
+
             <div className="screen-table-wrapper">
-
               <table className="screen-table">
-
                 <thead>
                   <tr>
                     <th>Screen</th>
@@ -650,185 +695,127 @@ function AdminScreens() {
                 </thead>
 
                 <tbody>
+                  {screens.map((screen) => (
+                    <tr key={screen.id}>
+                      {/* SCREEN */}
 
-                  {screens.map(
-                    (screen) => (
-                      <tr
-                        key={screen._id}
-                      >
-
-                        {/* SCREEN */}
-
-                        <td>
-
-                          <div className="screen-name-cell">
-
-                            <div className="screen-number-icon">
-                              🎬
-                            </div>
-
-                            <div>
-                              <strong>
-                                {screen.name}
-                              </strong>
-
-                              <small>
-                                ID:{" "}
-                                {screen._id?.slice(
-                                  -6
-                                )}
-                              </small>
-                            </div>
-
+                      <td>
+                        <div className="screen-name-cell">
+                          <div className="screen-number-icon">
+                            🎬
                           </div>
 
-                        </td>
-
-                        {/* THEATRE */}
-
-                        <td>
-
-                          <div className="screen-theatre-cell">
-
-                            <strong>
-                              {getTheatreName(
-                                screen
-                              )}
-                            </strong>
+                          <div>
+                            <strong>{screen.name}</strong>
 
                             <small>
-                              {getTheatreCity(
-                                screen
-                              )}
+                              ID:{" "}
+                              {screen.id
+                                ? screen.id.slice(-6)
+                                : "N/A"}
                             </small>
-
                           </div>
+                        </div>
+                      </td>
 
-                        </td>
+                      {/* THEATRE */}
 
-                        {/* TYPE */}
+                      <td>
+                        <div className="screen-theatre-cell">
+                          <strong>
+                            {getTheatreName(screen)}
+                          </strong>
 
-                        <td>
+                          <small>
+                            {getTheatreCity(screen)}
+                          </small>
+                        </div>
+                      </td>
 
-                          <span className="screen-type-badge">
-                            {screen.screenType ||
-                              "Standard"}
-                          </span>
+                      {/* TYPE */}
 
-                        </td>
+                      <td>
+                        <span className="screen-type-badge">
+                          {screen.screenType || "Standard"}
+                        </span>
+                      </td>
 
-                        {/* CAPACITY */}
+                      {/* CAPACITY */}
 
-                        <td>
+                      <td>
+                        <div className="screen-capacity">
+                          <strong>
+                            {screen.totalSeats || 0}
+                          </strong>
 
-                          <div className="screen-capacity">
+                          <span>seats</span>
+                        </div>
+                      </td>
 
-                            <strong>
-                              {screen.totalSeats ||
-                                0}
-                            </strong>
+                      {/* LAYOUT */}
 
-                            <span>
-                              seats
-                            </span>
+                      <td>
+                        <div className="screen-layout">
+                          <strong>
+                            {getRowCount(screen.rows)} ×{" "}
+                            {screen.seatsPerRow || 0}
+                          </strong>
 
-                          </div>
+                          <small>Rows × Seats</small>
+                        </div>
+                      </td>
 
-                        </td>
+                      {/* STATUS */}
 
-                        {/* LAYOUT */}
+                      <td>
+                        <span
+                          className={`screen-status ${
+                            screen.status === "inactive"
+                              ? "inactive"
+                              : "active"
+                          }`}
+                        >
+                          <span className="screen-status-dot" />
 
-                        <td>
+                          {screen.status === "inactive"
+                            ? "Inactive"
+                            : "Active"}
+                        </span>
+                      </td>
 
-                          <div className="screen-layout">
+                      {/* ACTIONS */}
 
-                            <strong>
-                              {screen.rows ||
-                                0}{" "}
-                              ×{" "}
-                              {screen.seatsPerRow ||
-                                0}
-                            </strong>
-
-                            <small>
-                              Rows × Seats
-                            </small>
-
-                          </div>
-
-                        </td>
-
-                        {/* STATUS */}
-
-                        <td>
-
-                          <span
-                            className={`screen-status ${
-                              screen.status ===
-                              "active"
-                                ? "active"
-                                : "inactive"
-                            }`}
+                      <td>
+                        <div className="screen-actions">
+                          <button
+                            type="button"
+                            className="screen-edit-button"
+                            onClick={() => handleEdit(screen)}
+                            disabled={saving}
                           >
-                            <span className="screen-status-dot"></span>
+                            Edit
+                          </button>
 
-                            {screen.status ===
-                            "active"
-                              ? "Active"
-                              : "Inactive"}
-                          </span>
-
-                        </td>
-
-                        {/* ACTIONS */}
-
-                        <td>
-
-                          <div className="screen-actions">
-
-                            <button
-                              type="button"
-                              className="screen-edit-button"
-                              onClick={() =>
-                                handleEdit(
-                                  screen
-                                )
-                              }
-                            >
-                              Edit
-                            </button>
-
-                            <button
-                              type="button"
-                              className="screen-delete-button"
-                              onClick={() =>
-                                handleDelete(
-                                  screen._id
-                                )
-                              }
-                            >
-                              Delete
-                            </button>
-
-                          </div>
-
-                        </td>
-
-                      </tr>
-                    )
-                  )}
-
+                          <button
+                            type="button"
+                            className="screen-delete-button"
+                            onClick={() =>
+                              handleDelete(screen.id)
+                            }
+                            disabled={saving}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
-
               </table>
-
             </div>
           )}
-
         </section>
-
       </div>
-
     </div>
   );
 }

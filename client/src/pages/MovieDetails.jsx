@@ -10,18 +10,20 @@ function MovieDetails() {
   const [error, setError] = useState("");
 
   // =====================================================
-  // BACKEND URL
+  // JAVA SPRING BOOT BACKEND
   // =====================================================
 
   const API_BASE =
     import.meta.env.VITE_API_URL ||
-    "http://localhost:5000/api";
+    "http://localhost:8080/api";
 
-  const SERVER_URL =
-    API_BASE.replace(/\/api\/?$/, "");
+  const SERVER_URL = API_BASE.replace(
+    /\/api\/?$/,
+    ""
+  );
 
   // =====================================================
-  // CONVERT POSTER PATH INTO WORKING URL
+  // POSTER URL
   // =====================================================
 
   const getPosterUrl = (poster) => {
@@ -29,8 +31,7 @@ function MovieDetails() {
       return "";
     }
 
-    const posterString =
-      String(poster).trim();
+    const posterString = String(poster).trim();
 
     // Already a complete URL
     if (
@@ -41,9 +42,7 @@ function MovieDetails() {
     }
 
     // Backend-relative path
-    if (
-      posterString.startsWith("/")
-    ) {
+    if (posterString.startsWith("/")) {
       return `${SERVER_URL}${posterString}`;
     }
 
@@ -62,9 +61,7 @@ function MovieDetails() {
         setError("");
 
         const response =
-          await api.get(
-            `/movies/${id}`
-          );
+          await api.get(`/movies/${id}`);
 
         const movieData =
           response.data?.movie ||
@@ -72,15 +69,14 @@ function MovieDetails() {
           response.data;
 
         if (!movieData) {
-          setError(
-            "Movie not found."
-          );
+          setError("Movie not found.");
           return;
         }
 
         setMovie(movieData);
 
       } catch (err) {
+
         console.error(
           "Failed to fetch movie:",
           err
@@ -90,12 +86,14 @@ function MovieDetails() {
           err.response?.data?.message ||
           "Unable to load movie details."
         );
+
       } finally {
         setLoading(false);
       }
     };
 
     fetchMovie();
+
   }, [id]);
 
   // =====================================================
@@ -105,11 +103,9 @@ function MovieDetails() {
   if (loading) {
     return (
       <div className="page">
-
         <h1>
           Loading Movie...
         </h1>
-
       </div>
     );
   }
@@ -165,10 +161,13 @@ function MovieDetails() {
         <div className="details-poster">
 
           {posterUrl ? (
+
             <img
               src={posterUrl}
               alt={`${movie.title} poster`}
+
               onError={(event) => {
+
                 console.error(
                   "MOVIE POSTER FAILED:",
                   posterUrl
@@ -188,11 +187,14 @@ function MovieDetails() {
                   fallback.style.display =
                     "flex";
                 }
+
               }}
             />
+
           ) : null}
 
-          {/* Fallback if poster doesn't exist */}
+          {/* FALLBACK */}
+
           <div
             className="poster-fallback"
             style={{
@@ -201,6 +203,7 @@ function MovieDetails() {
                 : "flex",
             }}
           >
+
             <span>
               CINEBOOK
             </span>
@@ -208,6 +211,7 @@ function MovieDetails() {
             <strong>
               {movie.title}
             </strong>
+
           </div>
 
         </div>
@@ -240,12 +244,8 @@ function MovieDetails() {
 
             {movie.genre && (
               <span>
-                {Array.isArray(
-                  movie.genre
-                )
-                  ? movie.genre.join(
-                      " • "
-                    )
+                {Array.isArray(movie.genre)
+                  ? movie.genre.join(" • ")
                   : movie.genre}
               </span>
             )}
@@ -279,7 +279,7 @@ function MovieDetails() {
           <div className="details-actions">
 
             <Link
-              to={`/movies/${movie._id}/theatres`}
+              to={`/movies/${movie.id}/theatres`}
               className="primary-button"
             >
               Book Tickets
