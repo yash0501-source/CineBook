@@ -34,9 +34,11 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
+        // Local development and deployed frontend
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "http://127.0.0.1:5173"
+                "http://127.0.0.1:5173",
+                "https://cinebook-frontend-7omv.onrender.com"
         ));
 
         configuration.setAllowedMethods(List.of(
@@ -66,18 +68,17 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
-
                 .cors(cors -> {})
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // Allow browser preflight requests
+                        // Browser preflight requests
                         .requestMatchers(
                                 HttpMethod.OPTIONS,
                                 "/**"
                         ).permitAll()
 
-                        // Public health and authentication endpoints
+                        // Public health and authentication
                         .requestMatchers(
                                 "/api/health",
                                 "/api/auth/register",
@@ -85,50 +86,42 @@ public class SecurityConfig {
                                 "/api/auth/profile"
                         ).permitAll()
 
-                        // Public movie endpoints
+                        // Public movie APIs
                         .requestMatchers(
                                 "/api/movies",
                                 "/api/movies/**"
                         ).permitAll()
 
-                        // Public theatre endpoints
+                        // Public theatre APIs
                         .requestMatchers(
                                 "/api/theatres",
                                 "/api/theatres/**"
                         ).permitAll()
 
-                        // Public screen endpoints
+                        // Public screen APIs
                         .requestMatchers(
                                 "/api/screens",
                                 "/api/screens/**"
                         ).permitAll()
 
-                        // Public show endpoints
+                        // Public show APIs
                         .requestMatchers(
                                 "/api/shows",
                                 "/api/shows/**"
                         ).permitAll()
 
-                        // Customer booking operations
+                        // Existing customer booking APIs
                         .requestMatchers(
                                 "/api/bookings",
                                 "/api/bookings/**"
                         ).permitAll()
 
-                        // Debug endpoints
+                        // Admin APIs require authentication
                         .requestMatchers(
-                                "/api/debug",
-                                "/api/debug/**"
-                        ).permitAll()
+                                "/api/admin/**"
+                        ).authenticated()
 
-                        // Admin development endpoints
-                        .requestMatchers(
-                                "/api/admin/dashboard",
-                                "/api/admin/bookings",
-                                "/api/admin/bookings/**"
-                        ).permitAll()
-
-                        // All other endpoints require authentication
+                        // All remaining endpoints require authentication
                         .anyRequest().authenticated()
                 );
 
