@@ -1,5 +1,6 @@
-
 package com.cinebook.cinebook.config;
+
+import com.cinebook.cinebook.security.TokenAuthenticationFilter;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -17,6 +20,12 @@ import java.util.List;
 
 @Configuration
 public class SecurityConfig {
+
+    private final TokenAuthenticationFilter tokenAuthenticationFilter;
+
+    public SecurityConfig(TokenAuthenticationFilter tokenAuthenticationFilter) {
+        this.tokenAuthenticationFilter = tokenAuthenticationFilter;
+    }
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -34,7 +43,6 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Local development and deployed frontend
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
@@ -68,17 +76,24 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
+
                 .cors(cors -> {})
+
+                // Read CineBook Bearer token before authorization
+                .addFilterBefore(
+                        tokenAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // Browser preflight requests
+                        // Browser preflight
                         .requestMatchers(
                                 HttpMethod.OPTIONS,
                                 "/**"
                         ).permitAll()
 
-                        // Public health and authentication
+                        // Authentication
                         .requestMatchers(
                                 "/api/health",
                                 "/api/auth/register",
@@ -86,42 +101,41 @@ public class SecurityConfig {
                                 "/api/auth/profile"
                         ).permitAll()
 
-                        // Public movie APIs
+                        // Movies
                         .requestMatchers(
                                 "/api/movies",
                                 "/api/movies/**"
                         ).permitAll()
 
-                        // Public theatre APIs
+                        // Theatres
                         .requestMatchers(
                                 "/api/theatres",
                                 "/api/theatres/**"
                         ).permitAll()
 
-                        // Public screen APIs
+                        // Screens
                         .requestMatchers(
                                 "/api/screens",
                                 "/api/screens/**"
                         ).permitAll()
 
-                        // Public show APIs
+                        // Shows
                         .requestMatchers(
                                 "/api/shows",
                                 "/api/shows/**"
                         ).permitAll()
 
-                        // Existing customer booking APIs
+                        // Customer bookings
                         .requestMatchers(
                                 "/api/bookings",
                                 "/api/bookings/**"
                         ).permitAll()
 
-                        // Admin APIs require authentication
-                        .requestMatchers(
-                                "/api/admin/**"
-                        ).authenticated()
+                        // ADMIN ONLY
+                        .requestMatchers("/api/admin/**")
+                        .hasRole("ADMIN")
 
-                        // All remaining endpoints require authentication
+                        // Everything else
                         .anyRequest().authenticated()
                 );
 

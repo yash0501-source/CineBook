@@ -1,4 +1,3 @@
-
 package com.cinebook.cinebook.service;
 
 import com.cinebook.cinebook.model.User;
@@ -57,6 +56,8 @@ public class AuthService {
         user.setName(name.trim());
         user.setEmail(cleanEmail);
         user.setPassword(passwordEncoder.encode(password));
+
+        // Normal registered users are regular users
         user.setRole("user");
 
         User savedUser = userRepository.save(user);
@@ -92,7 +93,10 @@ public class AuthService {
                         )
                 );
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(
+                password,
+                user.getPassword()
+        )) {
             throw new IllegalArgumentException(
                     "Invalid email or password."
             );
@@ -110,11 +114,17 @@ public class AuthService {
 
     private String generateToken(User user) {
         String token = UUID.randomUUID().toString();
-        activeTokens.put(token, user.getId());
+
+        activeTokens.put(
+                token,
+                user.getId()
+        );
+
         return token;
     }
 
     public Map<String, Object> getProfile(String token) {
+
         if (token == null || token.trim().isEmpty()) {
             throw new IllegalArgumentException(
                     "Authentication token is missing."
@@ -139,7 +149,30 @@ public class AuthService {
         return createSafeUser(user);
     }
 
+    /*
+     * Used by TokenAuthenticationFilter.
+     *
+     * Converts our temporary login token back into
+     * the corresponding MongoDB User.
+     */
+    public User getUserFromToken(String token) {
+
+        if (token == null || token.trim().isEmpty()) {
+            return null;
+        }
+
+        String userId = activeTokens.get(token);
+
+        if (userId == null) {
+            return null;
+        }
+
+        return userRepository.findById(userId)
+                .orElse(null);
+    }
+
     private Map<String, Object> createSafeUser(User user) {
+
         Map<String, Object> safeUser = new HashMap<>();
 
         safeUser.put("id", user.getId());
